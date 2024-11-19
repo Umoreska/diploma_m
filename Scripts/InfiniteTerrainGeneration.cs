@@ -88,13 +88,14 @@ public class InfiniteTerrainGeneration : MonoBehaviour
                         terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial));
                     }
                     continue;
-                }else if(MathF.Abs(offset_x) == 1 || MathF.Abs(offset_y) == 1) {
-                    if(IsObjectInView(main_camera.transform.position, main_camera.transform.forward, chunk_position_on_scene, viewAngle) || true) {
+                }else if(MathF.Abs(offset_x) == 1 && offset_y == 0 || MathF.Abs(offset_y) == 1 && offset_x == 0) {
+                    if(IsChunkOnRightOrLeft(main_camera.transform.position, main_camera.transform.forward, chunk_position_on_scene, viewAngle)) {
                         if(terrain_chunk_dictionary.ContainsKey(chunk_coord)) {
                             terrain_chunk_dictionary[chunk_coord].UpdateChunk();
                         }else {
                             terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial));
                         }
+                        continue;
                     }
                 }
                 
@@ -176,10 +177,11 @@ public class InfiniteTerrainGeneration : MonoBehaviour
 
         float angle_to_chunk = Vector3.Angle(looking_dir, direction_to_chunk);
 
-        bool is_left_side = Mathf.Abs(angle_to_chunk - 90f) <= angle_threshold;
+        /*bool is_left_side = Mathf.Abs(angle_to_chunk - 90f) <= angle_threshold;
         bool is_right_side = Mathf.Abs(angle_to_chunk + 90f) <= angle_threshold;
 
-        return is_left_side || is_right_side;
+        return is_left_side || is_right_side;*/
+        return angle_to_chunk > angle_threshold/2 && angle_to_chunk < angle_threshold; 
     }
 
     public class TerrainChunk{

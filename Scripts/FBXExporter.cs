@@ -74,6 +74,7 @@ namespace AsciiFBXExporter
             }
 
 			string buildMesh = MeshToString(gameObj, newFileNameWithFullPath, copyMaterials, copyTextures, relativeMaterialFolderName, relativeTextureFolderName);
+			Debug.Log(buildMesh);
 
 			if(File.Exists(newFileNameWithFullPath))
 				File.Delete(newFileNameWithFullPath);

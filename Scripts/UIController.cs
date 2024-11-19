@@ -6,6 +6,7 @@ using System.IO;
 using TMPro;
 using UnityEditor.Formats.Fbx.Exporter;
 using Autodesk.Fbx;
+using UnityEditor;
 
 
 public class UIController : MonoBehaviour
@@ -123,12 +124,21 @@ public class UIController : MonoBehaviour
     }
 
     public void ExportMeshToFbx() {
-
         string filePath = Path.Combine(Application.dataPath, "MyTerrain.fbx");
-        Debug.Log($"{filePath}");
-        AsciiFBXExporter.FBXExporter.ExportGameObjAtRuntime(mesh_transform.gameObject, filePath); // does not work. result mesh is empty somehow
-
+        ExportToFbx(mesh_transform.gameObject, filePath);
     }
+
+
+    private static void ExportToFbx(GameObject gameObject, string path) {
+
+        ExportModelOptions exportSettings = new ExportModelOptions();
+        exportSettings.ExportFormat = ExportFormat.Binary;
+        exportSettings.KeepInstances = false;
+
+        ModelExporter.ExportObject(path, gameObject, exportSettings);
+
+        Debug.Log($"Object '{gameObject.name}' exported to FBX at: {path}");
+    }    
 
 
     private float[,] map = null;

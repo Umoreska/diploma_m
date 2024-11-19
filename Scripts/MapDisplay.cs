@@ -103,7 +103,7 @@ public class MapDisplay : MonoBehaviour
         //Color[] color_map = CreateColorMap(noise_map);
         MeshData data = MeshGenerator.GenerateTerrainMesh(noise_map, height_multiplier*mesh_renderer.transform.localScale.x, mesh_height_curve, level_of_detail, useFlatShading);
 
-        mesh_filter.sharedMesh = data.CreateMesh();    
+        mesh_filter.sharedMesh = data.CreateMesh(true);    
         //mesh_filter.transform.localScale = Vector2.one * map_generator.terrain_data.uniform_scale;
 
         int width = noise_map.GetLength(0);

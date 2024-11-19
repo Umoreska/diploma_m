@@ -202,9 +202,11 @@ public class MeshData {
 		uvs = flat_shaded_uvs;
 	}
 
-	public Mesh CreateMesh() {
+	public Mesh CreateMesh(bool big_boy=false) {
 		Mesh mesh = new Mesh ();
-        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+		if(big_boy) {
+        	mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+		}
 		mesh.vertices = vertices;
 		mesh.triangles = triangles;
 		mesh.uv = uvs;
