@@ -7,6 +7,7 @@ using TMPro;
 using UnityEditor.Formats.Fbx.Exporter;
 using Autodesk.Fbx;
 using UnityEditor;
+using Unity.IntegerTime;
 
 
 public class UIController : MonoBehaviour
@@ -22,7 +23,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private TMP_Dropdown algorithm_dropdown, draw_mode_dropdown, size_dropdown;
     [SerializeField] private Slider scale_slider, seed_slider, offset_x_slider, offset_y_slider, roughness_slider, octaves_slider, persistance_slider, 
                                     lacunarity_slider, point_count_slider, max_height_slider, dla_initial_slider, dla_steps_slider, erosion_iterations_slider, 
-                                    delta_time_slider, trees_seed_slider, trees_count_slider;
+                                    trees_seed_slider, trees_count_slider, merge_ratio_slider;
     [SerializeField] private CinemachineVirtualCamera camera_on_plane, camera_on_terrain;
     private bool generate_on_input_change=false, use_fallof=false;
 
@@ -49,6 +50,9 @@ public class UIController : MonoBehaviour
     public void LookAtPlane() {
         camera_on_terrain.gameObject.SetActive(false);
         camera_on_plane.gameObject.SetActive(true);
+
+        camera_on_plane.transform.localPosition = Vector3.zero;
+
         draw_mode_input.SetActive(true);
         max_height_input.SetActive(false);
         draw_mode_dropdown.value = (int)DrawMode.ColorMap;
@@ -57,9 +61,20 @@ public class UIController : MonoBehaviour
     public void LookAtTerrain() {
         camera_on_plane.gameObject.SetActive(false);
         camera_on_terrain.gameObject.SetActive(true);
+
+        camera_on_terrain.transform.localPosition = Vector3.zero;
+
         draw_mode_input.SetActive(false);
         max_height_input.SetActive(true);
         draw_mode = DrawMode.Mesh;
+    }
+
+    public void DrawMeshWithMap() {
+        if(map == null) {
+            return;
+        }
+        bool use_flat_shading = false; // read from user
+        map_display.DrawMesh(map, max_height_slider.value, map_generator.terrain_data.mesh_height_curve, use_flat_shading);
     }
 
  
@@ -90,6 +105,50 @@ public class UIController : MonoBehaviour
         }
 
         ShowResult();
+    }
+
+    public void MergeMaps() {
+
+        float[,] merged_map = null;
+
+        float ratio = merge_ratio_slider.value; // how strong new map rewrite old values
+        if(ratio > 1 || ratio < 0) {
+            Debug.LogWarning($"ratio is out of bound: {ratio}, clamping");
+            ratio = Mathf.Clamp(ratio, 0, 1);
+        }
+
+        int size = (int)Mathf.Pow(2, size_dropdown.value+5);
+        algorithm = (HeightMapAlgorithm)algorithm_dropdown.value;
+        float[,] new_map = GenerateMap(size, algorithm);
+        
+        if(map == null) {
+            map = new_map;
+            ShowResult();
+            return;
+        }
+
+        if(map.GetLength(0) == new_map.GetLength(0)) { // thanks god.. 
+            size = map.GetLength(0);
+            merged_map = new float[size,size];
+            for(int i = 0; i < size; i++) {
+                for(int j = 0; j < size; j++) {
+                    merged_map[i,j] = CalculateMergedValue(ratio, map[i,j], new_map[i,j]);
+                }
+            }
+
+        }else { // fuck
+            Debug.Log($"they have different size: {map.GetLength(0)}:{new_map.GetLength(0)}");
+            return;
+        }
+
+        map = merged_map;
+        ShowResult();
+
+    }
+
+    private float CalculateMergedValue(float ratio, float old_value, float new_value) {
+        return old_value*(1-ratio) + new_value*ratio;
+        // old*0.9 + new*0.1
     }
 
     GameObject[] placed_objects = null;
@@ -142,43 +201,49 @@ public class UIController : MonoBehaviour
 
 
     private float[,] map = null;
-    public void Generate() {
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
-
-        int _size = (int)Mathf.Pow(2, size_dropdown.value+5);
+    private float[,] GenerateMap(int _size, HeightMapAlgorithm algorithm) {
+        float[,] height_map = null;
         Debug.Log(algorithm_dropdown.value);
-        algorithm = (HeightMapAlgorithm)algorithm_dropdown.value;
+        
         switch(algorithm) {
             case HeightMapAlgorithm.PerlinNoise:
-                map = PerlinNoiseGenerator.GenerateHeights(_size, scale_slider.value);
+                height_map = PerlinNoiseGenerator.GenerateHeights(_size, scale_slider.value);
             break;
             case HeightMapAlgorithm.FractalPerlinNoise:
                 FractalPerlinNoise.Noise perlin_noise_type = FractalPerlinNoise.Noise.UnityPerlin; // should i give user access to choose?
                 Vector2 offset = new Vector2(offset_x_slider.value, offset_y_slider.value);
-                map = FractalPerlinNoise.GenerateHeights(_size, 
+                height_map = FractalPerlinNoise.GenerateHeights(_size, 
                                                     (int)seed_slider.value, scale_slider.value, 
                                                     (int)octaves_slider.value, persistance_slider.value, lacunarity_slider.value, offset, 
                                                     FractalPerlinNoise.NormalizeMode.Local, perlin_noise_type);
             break;
             case HeightMapAlgorithm.DiamondSquare:
-                map = DiamondSquareTerrain.GenerateHeights(_size+1, roughness_slider.value, (int)seed_slider.value, false);
+                height_map = DiamondSquareTerrain.GenerateHeights(_size+1, roughness_slider.value, (int)seed_slider.value, false);
             break;
             case HeightMapAlgorithm.Voronoi:
-                map = VoronoiTerrain.GenerateHeights(_size, (int)point_count_slider.value, (int)seed_slider.value, false);
+                height_map = VoronoiTerrain.GenerateHeights(_size, (int)point_count_slider.value, (int)seed_slider.value, false);
             break;
             case HeightMapAlgorithm.DLA:
                 int initialGridSize = (int)dla_initial_slider.value;
                 int stepAmount = (int)dla_steps_slider.value;
-                map = DLA.RunDLA(initialGridSize, stepAmount);
+                height_map = DLA.RunDLA(initialGridSize, stepAmount);
                 //int size = initialGridSize * (int)Mathf.Pow(DLA.UPSCALE_FACTOR, stepAmount); // res_size = initial * scale_factor^steps// just in case lol
                 break;
             default:
                 Debug.LogWarning("Using undefined algorithm: " + algorithm);
                 Debug.Break();
-            break;
-            
+            break;            
         }
+
+        return height_map;
+    }
+    public void Generate() {
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
+        
+        int _size = (int)Mathf.Pow(2, size_dropdown.value+5);
+        algorithm = (HeightMapAlgorithm)algorithm_dropdown.value;
+        map = GenerateMap(_size, algorithm);
         sw.Stop();
         Debug.Log($"time for noise generation: {sw.ElapsedMilliseconds} ms");
 
@@ -200,7 +265,8 @@ public class UIController : MonoBehaviour
 
     private void ShowResult() {
         if(draw_mode == DrawMode.Mesh) {
-            map_display.DrawMesh(map, max_height_slider.value, map_generator.terrain_data.mesh_height_curve, false);
+            bool use_flat_shading = false; // read from user
+            map_display.DrawMesh(map, max_height_slider.value, map_generator.terrain_data.mesh_height_curve, use_flat_shading);
         }else {
             if((DrawMode)draw_mode_dropdown.value == DrawMode.NoiseMap) {
                 map_display.DrawNoiseMap(map);

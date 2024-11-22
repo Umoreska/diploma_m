@@ -208,7 +208,7 @@ public class InfiniteTerrainGeneration : MonoBehaviour
             Vector3 position_on_scene = new Vector3(position.x,0,position.y);
             bounds = new Bounds(position,Vector2.one*size);
             
-            meshObject = new GameObject("Terrain Chunk");
+            meshObject = new GameObject($"Terrain Chunk [{coord.x}; {coord.y}]");
             meshObject.layer = LayerMask.NameToLayer("Ground");//ground_layer;
 
             meshObject.transform.position = position_on_scene * mapGenerator.terrain_data.uniform_scale;
