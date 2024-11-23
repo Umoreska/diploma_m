@@ -101,6 +101,7 @@ public class MapDisplay : MonoBehaviour
     public void DrawMesh(float[,] noise_map, Color[] colourMap, float height_multiplier, AnimationCurve mesh_height_curve, int level_of_detail, bool useFlatShading, bool is_in_editor=false) {        
 
         //Color[] color_map = CreateColorMap(noise_map);
+        Debug.Log(mesh_renderer == null);
         MeshData data = MeshGenerator.GenerateTerrainMesh(noise_map, height_multiplier*mesh_renderer.transform.localScale.x, mesh_height_curve, level_of_detail, useFlatShading);
 
         mesh_filter.sharedMesh = data.CreateMesh(true);    

@@ -13,6 +13,7 @@ public class InfiniteTerrainGeneration : MonoBehaviour
     private const float viewer_move_distance_threshold_for_update = 25f;
     private const float squared_viewer_move_distance_threshold_for_update = viewer_move_distance_threshold_for_update*viewer_move_distance_threshold_for_update;
     private const float viewer_rotate_angle_threshold_for_update = 5f;
+    public GameObject terrain_prefab;
     [SerializeField] private ChunkUpdateMode chunkUpdateMode = 0;
     [SerializeField] private Camera main_camera;
     [SerializeField] private float viewAngle = 90f;
@@ -85,7 +86,7 @@ public class InfiniteTerrainGeneration : MonoBehaviour
                     if(terrain_chunk_dictionary.ContainsKey(chunk_coord)) {
                         terrain_chunk_dictionary[chunk_coord].UpdateChunk();
                     }else {
-                        terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial));
+                        terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(terrain_prefab, chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial));
                     }
                     continue;
                 }else if(MathF.Abs(offset_x) == 1 && offset_y == 0 || MathF.Abs(offset_y) == 1 && offset_x == 0) {
@@ -93,7 +94,7 @@ public class InfiniteTerrainGeneration : MonoBehaviour
                         if(terrain_chunk_dictionary.ContainsKey(chunk_coord)) {
                             terrain_chunk_dictionary[chunk_coord].UpdateChunk();
                         }else {
-                            terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial));
+                            terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(terrain_prefab, chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial));
                         }
                         continue;
                     }
@@ -113,7 +114,7 @@ public class InfiniteTerrainGeneration : MonoBehaviour
                         if(terrain_chunk_dictionary.ContainsKey(chunk_coord)) {
                             terrain_chunk_dictionary[chunk_coord].UpdateChunk();
                         }else {
-                            terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial));
+                            terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(terrain_prefab, chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial));
                         }
                     break;
                     case ChunkUpdateMode.OnlyView: // load and show only chunks in view
@@ -122,13 +123,13 @@ public class InfiniteTerrainGeneration : MonoBehaviour
                             if(terrain_chunk_dictionary.ContainsKey(chunk_coord)) {
                                 terrain_chunk_dictionary[chunk_coord].UpdateChunk();
                             }else {
-                                terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial));
+                                terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(terrain_prefab, chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial));
                             }
                         }
                     break;
                     case ChunkUpdateMode.ViewPreload: // load chunk around and show only in view
                         if(terrain_chunk_dictionary.ContainsKey(chunk_coord) == false) {
-                            terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial, false));
+                            terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(terrain_prefab, chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial, false));
                         }
                         var chunk = terrain_chunk_dictionary[chunk_coord];                    
                         if(IsObjectInView(main_camera.transform.position, main_camera.transform.forward, chunk_position_on_scene, viewAngle)) {
@@ -201,18 +202,19 @@ public class InfiniteTerrainGeneration : MonoBehaviour
         private bool map_data_received;
         private int prev_lod_index = -1; // it has to be updated first time
 
-        public TerrainChunk(Vector2 coord, int size, LODInfo[] detail_level, Transform parent, Material material, bool auto_update=true) {
+        public TerrainChunk(GameObject terrain_prefab, Vector2 coord, int size, LODInfo[] detail_level, Transform parent, Material material, bool auto_update=true) {
             this.detail_level = detail_level;
 
             position = coord * size;
             Vector3 position_on_scene = new Vector3(position.x,0,position.y);
             bounds = new Bounds(position,Vector2.one*size);
             
-            meshObject = new GameObject($"Terrain Chunk [{coord.x}; {coord.y}]");
+            //meshObject = new GameObject($"Terrain Chunk [{coord.x}; {coord.y}]");
+            //meshObject.transform.parent = parent;
+            meshObject = Instantiate(terrain_prefab, parent);
             meshObject.layer = LayerMask.NameToLayer("Ground");//ground_layer;
 
             meshObject.transform.position = position_on_scene * mapGenerator.terrain_data.uniform_scale;
-            meshObject.transform.parent = parent;
             meshObject.transform.localScale = Vector3.one * mapGenerator.terrain_data.uniform_scale;
 
             meshRenderer = meshObject.AddComponent<MeshRenderer>();
