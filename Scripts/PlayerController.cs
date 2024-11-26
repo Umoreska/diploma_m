@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour
         cameraTransform = Camera.main.transform;
         controller = GetComponent<CharacterController>();
 
-        StartCoroutine(Delay(place_on_surface_delay, PlacePlayerOnTerrainSurface));
+        StartCoroutine(Delay(place_on_surface_delay, () => PlacePlayerOnTerrainSurface(ray_check_height)));
     }
 
     private bool isGrounded_prev_frame = true;
@@ -98,14 +98,14 @@ public class PlayerController : MonoBehaviour
         action?.Invoke();
     }
 
-    private void PlacePlayerOnTerrainSurface() {
+    public void PlacePlayerOnTerrainSurface(float ray_check_height) {
         Vector3 characterPosition = transform.position;
         
         Vector3 rayStartPos = new Vector3(characterPosition.x, ray_check_height, characterPosition.z);
         Ray ray = new Ray(rayStartPos, Vector3.down);
         RaycastHit hit;
 
-        Debug.DrawLine(rayStartPos, rayStartPos+Vector3.down*ray_check_height, Color.red, 10f);
+        Debug.DrawLine(rayStartPos, rayStartPos+Vector3.down*ray_check_height*2, Color.red, 10f);
         
         if (Physics.Raycast(ray, out hit, ray_check_height*2)) {
             transform.position = new Vector3(characterPosition.x, hit.point.y, characterPosition.z);

@@ -73,15 +73,15 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _ground_rock_power: 1.48
-    - _mountain_rock_power: 3
+    - _ground_rock_power: 0
+    - _mountain_rock_power: 0
     - _rock_bottom: 100
     - _rock_edge: 50
     - _rock_height: 153.2
-    - _sand_bottom: -9.99
-    - _sand_edge: 48
+    - _sand_bottom: 5
+    - _sand_edge: 15
     - _snow_bottom: 200
-    - _snow_edge: 45
+    - _snow_edge: 46
     - _snow_height: 211.7
     m_Colors:
     - _Color: {r: 0, g: 0, b: 0, a: 0}

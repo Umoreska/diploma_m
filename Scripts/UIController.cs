@@ -14,6 +14,8 @@ using SimpleFileBrowser;
 public class UIController : MonoBehaviour
 {
     [SerializeField] private Transform mesh_transform;
+    [SerializeField] private GameObject player_prefab;
+    private PlayerController player=null;
     [SerializeField] private Erosion erosion;
     [SerializeField] private DrawMode draw_mode;
     [SerializeField] private MapDisplay map_display;
@@ -46,6 +48,23 @@ public class UIController : MonoBehaviour
         if(generate_on_input_change) {
             Generate();
         }
+    }
+
+    public void PlacePlayer() {
+        if(player == null) {
+            player = Instantiate(player_prefab).GetComponent<PlayerController>();
+        }
+        player.gameObject.SetActive(true);
+        camera_on_plane.gameObject.SetActive(false);
+        camera_on_terrain.gameObject.SetActive(false);
+        player.transform.position = mesh_transform.position;
+        player.PlacePlayerOnTerrainSurface(100);
+    }
+
+    public void ReturnToEditor() {
+        player.gameObject.SetActive(false);
+        camera_on_terrain.gameObject.SetActive(false);
+        camera_on_plane.gameObject.SetActive(true);
     }
 
     public void LookAtPlane() {
@@ -127,10 +146,10 @@ public class UIController : MonoBehaviour
             ShowResult();
             return;
         }
+        size = map.GetLength(0);
+        merged_map = new float[size,size];
 
         if(map.GetLength(0) == new_map.GetLength(0)) { // thanks god.. 
-            size = map.GetLength(0);
-            merged_map = new float[size,size];
             for(int i = 0; i < size; i++) {
                 for(int j = 0; j < size; j++) {
                     merged_map[i,j] = CalculateMergedValue(ratio, map[i,j], new_map[i,j]);
@@ -139,13 +158,69 @@ public class UIController : MonoBehaviour
 
         }else { // fuck
             Debug.Log($"they have different size: {map.GetLength(0)}:{new_map.GetLength(0)}");
-            return;
+            
+            if(map.GetLength(0) < new_map.GetLength(0)) { // just cut unused part of new_map
+
+                int half_diff = new_map.GetLength(0)/2 - map.GetLength(0)/2;
+                for(int i = 0; i < size; i++) {
+                    for(int j = 0; j < size; j++) {
+                        merged_map[i,j] = CalculateMergedValue(ratio, map[i,j], new_map[i+half_diff,j+half_diff]);
+                    }
+                }
+            }else {
+                new_map = UpscaleHeightMap(new_map, size);
+                for(int i = 0; i < size; i++) {
+                    for(int j = 0; j < size; j++) {
+                        merged_map[i,j] = CalculateMergedValue(ratio, map[i,j], new_map[i,j]);
+                    }
+                }
+            }
         }
 
         map = merged_map;
         ShowResult();
-
     }
+
+    public static float[,] UpscaleHeightMap(float[,] heightMap, int newSize) {
+        int oldSize = heightMap.GetLength(0);
+        if (newSize <= oldSize) {
+            throw new System.ArgumentException("New size must be greater than the old size.");
+        }
+
+        float[,] newHeightMap = new float[newSize, newSize];
+
+        // Масштабування коефіцієнтів
+        float scale = (float)(oldSize - 1) / (newSize - 1);
+
+        for (int x = 0; x < newSize; x++)
+        {
+            for (int y = 0; y < newSize; y++)
+            {
+                // Позиція у старій мапі (з float-координатами)
+                float oldX = x * scale;
+                float oldY = y * scale;
+
+                // Індекси у старій мапі
+                int x0 = Mathf.FloorToInt(oldX);
+                int y0 = Mathf.FloorToInt(oldY);
+                int x1 = Mathf.Min(x0 + 1, oldSize - 1);
+                int y1 = Mathf.Min(y0 + 1, oldSize - 1);
+
+                // Відстань до наступної точки
+                float dx = oldX - x0;
+                float dy = oldY - y0;
+
+                // Білінійна інтерполяція
+                float top = Mathf.Lerp(heightMap[x0, y0], heightMap[x1, y0], dx);
+                float bottom = Mathf.Lerp(heightMap[x0, y1], heightMap[x1, y1], dx);
+                float value = Mathf.Lerp(top, bottom, dy);
+
+                newHeightMap[x, y] = value;
+            }
+        }
+        return newHeightMap;
+    }
+
 
     private float CalculateMergedValue(float ratio, float old_value, float new_value) {
         return old_value*(1-ratio) + new_value*ratio;
@@ -187,7 +262,8 @@ public class UIController : MonoBehaviour
          // Set filters (optional)
 		// It is sufficient to set the filters just once (instead of each time before showing the file browser dialog), 
 		// if all the dialogs will be using the same filters
-		FileBrowser.SetFilters( true, new FileBrowser.Filter( "Images", ".jpg", ".png" ), new FileBrowser.Filter( "Text Files", ".txt", ".pdf" ) );
+		//FileBrowser.SetFilters( true, new FileBrowser.Filter( "Images", ".jpg", ".png" ), new FileBrowser.Filter( "Text Files", ".txt", ".pdf" ) );
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "3D Files", ".fbx") );
 
 		// Set default filter that is selected when the dialog is shown (optional)
 		// Returns true if the default filter is set successfully
@@ -197,7 +273,7 @@ public class UIController : MonoBehaviour
 		// Set excluded file extensions (optional) (by default, .lnk and .tmp extensions are excluded)
 		// Note that when you use this function, .lnk and .tmp extensions will no longer be
 		// excluded unless you explicitly add them as parameters to the function
-		FileBrowser.SetExcludedExtensions( ".lnk", ".tmp", ".zip", ".rar", ".exe" );
+		//FileBrowser.SetExcludedExtensions( ".lnk", ".tmp", ".zip", ".rar", ".exe" );
 
 		// Add a new quick link to the browser (optional) (returns true if quick link is added successfully)
 		// It is sufficient to add a quick link just once
@@ -214,7 +290,9 @@ public class UIController : MonoBehaviour
 		// Save file/folder: file, Allow multiple selection: false
 		// Initial path: "C:\", Initial filename: "Screenshot.png"
 		// Title: "Save As", Submit button text: "Save"
-		FileBrowser.ShowSaveDialog( null, null, FileBrowser.PickMode.Folders, false, "C:\\", "terrain.fbx", "Save As", "Save" );
+		FileBrowser.ShowSaveDialog( (paths)=> {
+            ExportMeshToFbx(paths[0]);            
+        }, null, FileBrowser.PickMode.Files, false, "C:\\", "terrain.fbx", "Save As", "Save" );
 
 		// Example 2: Show a select folder dialog using callback approach
 		// onSuccess event: print the selected folder's path
@@ -230,8 +308,8 @@ public class UIController : MonoBehaviour
 		// StartCoroutine( ShowLoadDialogCoroutine() );
     }
 
-    public void ExportMeshToFbx() {
-        string filePath = Path.Combine(Application.dataPath, "MyTerrain.fbx");
+    public void ExportMeshToFbx(string filePath) {
+        //string filePath = Path.Combine(Application.dataPath, "MyTerrain.fbx");
         ExportToFbx(mesh_transform.gameObject, filePath);
     }
 

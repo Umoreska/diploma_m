@@ -17,7 +17,7 @@ public class DLA : MonoBehaviour{
     static float[] image;
 
     public static float[,] RunDLA(int start_size, int upscale_count) {
-        Random.InitState(42);
+        //Random.InitState(42);
         step = 1;
 
         // parent for cubes that are used for pixels visualisation
