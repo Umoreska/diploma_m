@@ -37,6 +37,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ground_texture:
+        m_Texture: {fileID: 2800000, guid: bafadcf258df85b4686863cbaa688fba, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _rock_texture:
         m_Texture: {fileID: 2800000, guid: 3f893818068c13c498261af150bea6f3, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -46,6 +50,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _side_texture:
+        m_Texture: {fileID: 2800000, guid: a87cbf62329d56d4681d92302095915c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _slope_texture:
         m_Texture: {fileID: 2800000, guid: a87cbf62329d56d4681d92302095915c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -74,17 +82,19 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ground_rock_power: 0
+    - _ground_slope_power: 1.5
     - _mountain_rock_power: 0
     - _rock_bottom: 100
     - _rock_edge: 50
     - _rock_height: 153.2
-    - _sand_bottom: 5
-    - _sand_edge: 15
+    - _sand_bottom: -3.12
+    - _sand_edge: 10
     - _snow_bottom: 200
-    - _snow_edge: 46
+    - _snow_edge: 100
     - _snow_height: 211.7
     m_Colors:
     - _Color: {r: 0, g: 0, b: 0, a: 0}
+    - _ground_tiling: {r: 5, g: 5, b: 0, a: 0}
     - _in_min_max: {r: 0.25, g: 1, b: 0, a: 0}
     - _in_min_max_dotProduct_clamp: {r: 0.5, g: 1, b: 0, a: 0}
     - _in_min_max_dotProduct_res: {r: 0.5, g: 1, b: 0, a: 0}
@@ -93,6 +103,7 @@ Material:
     - _sand_tiling: {r: 20, g: 20, b: 0, a: 0}
     - _side_color: {r: 0, g: 0.07710885, b: 1, a: 0}
     - _side_tiling: {r: 5, g: 5, b: 0, a: 0}
+    - _slope_tiling: {r: 5, g: 5, b: 0, a: 0}
     - _snow_tiling: {r: 5, g: 5, b: 0, a: 0}
     - _up_color: {r: 1, g: 0, b: 0.09019608, a: 0}
     - _up_tiling: {r: 5, g: 5, b: 0, a: 0}

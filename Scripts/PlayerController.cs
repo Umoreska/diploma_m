@@ -1,7 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections;
+using UnityEngine.Events;
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -10,8 +11,6 @@ public class PlayerController : MonoBehaviour
     public CharacterController controller;
 
     [Header("Movement Settings")]
-    [SerializeField] private float ground_moving_speed = 5f;
-    [SerializeField] private float air_moving_speed_mod = 2f;
     public float movementSpeed = 5f; // Швидкість руху персонажа
     public float gravity = -9.81f; // Прискорення вільного падіння
     public float jumpHeight = 1.5f; // Висота стрибка
@@ -29,6 +28,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float place_on_surface_delay = 0.1f;
     [SerializeField] private float ray_check_height = 50f;
+    private Action on_key_pressed_e=null;
     void Start() {
 
         // Блокуємо курсор у центрі екрана
@@ -44,6 +44,10 @@ public class PlayerController : MonoBehaviour
 
     private bool isGrounded_prev_frame = true;
     void Update() {
+
+        if(Input.GetKey(KeyCode.E)) {
+            on_key_pressed_e?.Invoke();
+        }
 
         isGrounded = controller.isGrounded;
 
@@ -98,20 +102,25 @@ public class PlayerController : MonoBehaviour
         action?.Invoke();
     }
 
-    public void PlacePlayerOnTerrainSurface(float ray_check_height) {
+    public void PlacePlayerOnTerrainSurface(float ray_check_height=9999) {
         Vector3 characterPosition = transform.position;
         
-        Vector3 rayStartPos = new Vector3(characterPosition.x, ray_check_height, characterPosition.z);
+        Vector3 rayStartPos = new Vector3(characterPosition.x, characterPosition.y+ray_check_height, characterPosition.z);
         Ray ray = new Ray(rayStartPos, Vector3.down);
         RaycastHit hit;
 
         Debug.DrawLine(rayStartPos, rayStartPos+Vector3.down*ray_check_height*2, Color.red, 10f);
+        Debug.Log($"{rayStartPos} -> {rayStartPos+Vector3.down*ray_check_height*2}");
         
         if (Physics.Raycast(ray, out hit, ray_check_height*2)) {
             transform.position = new Vector3(characterPosition.x, hit.point.y, characterPosition.z);
         } else {
             Debug.LogWarning("No collision detected. The ray missed any colliders.");
         }
+    }
+
+    public void SetActionOnKeyE(Action act) {
+        on_key_pressed_e = act;
     }
 
 }

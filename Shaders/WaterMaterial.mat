@@ -67,14 +67,14 @@ Material:
     - _ZWriteControl: 0
     - _depth: 18.25
     - _displacement: 5
-    - _displacement_speed: 0.95
-    - _displacement_strength: 2
+    - _displacement_speed: 0.5
+    - _displacement_strength: 0.5
     - _metalic: 0
-    - _normal_strength: 0.804
+    - _normal_strength: 1
     - _sin_freq: 2
-    - _smoothness: 0.875
+    - _smoothness: 0.75
     - _strength: 0.12
-    - _waves_speed: 2.59
+    - _waves_speed: 1
     m_Colors:
     - _deep_color: {r: 0.3568626, g: 0.6543391, b: 0.72156864, a: 0.62352943}
     - _normal_tiling: {r: 20, g: 20, b: 0, a: 0}

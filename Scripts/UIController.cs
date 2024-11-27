@@ -9,12 +9,15 @@ using Autodesk.Fbx;
 using UnityEditor;
 using Unity.IntegerTime;
 using SimpleFileBrowser;
+using System;
 
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField] private Transform mesh_transform;
-    [SerializeField] private GameObject player_prefab;
+    [SerializeField] private Transform mesh_transform, water_transform;
+    [SerializeField] private float min_water_height=-13f;
+    private MeshCollider mesh_collider;
+    [SerializeField] private GameObject player_prefab, editor_cameras, noise_settings, return_to_editor_hint, place_player_btn;
     private PlayerController player=null;
     [SerializeField] private Erosion erosion;
     [SerializeField] private DrawMode draw_mode;
@@ -22,7 +25,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject[] trees;
     [SerializeField] private MapGenerator map_generator;
     [SerializeField] private GameObject size_input, draw_mode_input, scale_input, seed_input, offset_x_input, offset_y_input, roughness_input, octaves_input, persistance_input, 
-                                    lacunarity_input, point_count_input, max_height_input, dla_initial_input, dla_steps_input, erosion_panel, trees_panel;
+                                    lacunarity_input, point_count_input, max_height_input, water_height_input, dla_initial_input, dla_steps_input, erosion_panel, trees_panel;
     [SerializeField] private TMP_Dropdown algorithm_dropdown, draw_mode_dropdown, size_dropdown;
     [SerializeField] private Slider scale_slider, seed_slider, offset_x_slider, offset_y_slider, roughness_slider, octaves_slider, persistance_slider, 
                                     lacunarity_slider, point_count_slider, max_height_slider, dla_initial_slider, dla_steps_slider, erosion_iterations_slider, 
@@ -34,6 +37,7 @@ public class UIController : MonoBehaviour
 
     private void Start() {
         //terrain_data = terrain.terrainData;
+        mesh_collider = mesh_transform.GetComponent<MeshCollider>();
     }
 
     public void GenerateOnInputChange(bool generate_on_input_change) {
@@ -50,21 +54,34 @@ public class UIController : MonoBehaviour
         }
     }
 
+    public void ChangeWaterHeight(float height) {
+        water_transform.localPosition = new Vector3(0, min_water_height+height*2, 0);
+    }
+
     public void PlacePlayer() {
         if(player == null) {
             player = Instantiate(player_prefab).GetComponent<PlayerController>();
+            player.SetActionOnKeyE(ReturnToEditor);
         }
         player.gameObject.SetActive(true);
-        camera_on_plane.gameObject.SetActive(false);
-        camera_on_terrain.gameObject.SetActive(false);
+        editor_cameras.SetActive(false);
         player.transform.position = mesh_transform.position;
-        player.PlacePlayerOnTerrainSurface(100);
+        player.PlacePlayerOnTerrainSurface();
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public void ReturnToEditor() {
         player.gameObject.SetActive(false);
-        camera_on_terrain.gameObject.SetActive(false);
-        camera_on_plane.gameObject.SetActive(true);
+        return_to_editor_hint.SetActive(false);
+        editor_cameras.SetActive(true);
+        noise_settings.SetActive(true);
+        place_player_btn.SetActive(true);
+
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void LookAtPlane() {
@@ -75,6 +92,8 @@ public class UIController : MonoBehaviour
 
         draw_mode_input.SetActive(true);
         max_height_input.SetActive(false);
+        water_height_input.SetActive(false);
+
         draw_mode_dropdown.value = (int)DrawMode.ColorMap;
         draw_mode = DrawMode.ColorMap;
     }
@@ -86,6 +105,8 @@ public class UIController : MonoBehaviour
 
         draw_mode_input.SetActive(false);
         max_height_input.SetActive(true);
+        water_height_input.SetActive(true);
+
         draw_mode = DrawMode.Mesh;
     }
 
@@ -95,11 +116,17 @@ public class UIController : MonoBehaviour
         }
         bool use_flat_shading = false; // read from user
         map_display.DrawMesh(map, max_height_slider.value, map_generator.terrain_data.mesh_height_curve, use_flat_shading);
+        mesh_collider.sharedMesh = null;
+        mesh_collider.sharedMesh = mesh_transform.GetComponent<MeshFilter>().sharedMesh;
     }
 
  
 
     public void ErodeMap() {
+        if(map == null) {
+            return;
+        }
+
         if(map.GetLength(0) != map.GetLength(1)) {
             Debug.LogWarning($"map width({map.GetLength(0)}) != map height({map.GetLength(1)})");
             Debug.Break();
@@ -393,6 +420,11 @@ public class UIController : MonoBehaviour
         if(draw_mode == DrawMode.Mesh) {
             bool use_flat_shading = false; // read from user
             map_display.DrawMesh(map, max_height_slider.value, map_generator.terrain_data.mesh_height_curve, use_flat_shading);
+            mesh_collider.sharedMesh = null;
+            mesh_collider.sharedMesh = mesh_transform.GetComponent<MeshFilter>().sharedMesh;
+
+            float scale = mesh_transform.transform.localScale.x;
+            water_transform.localScale = new Vector3(map.GetLength(0)/scale, 1, map.GetLength(1)/scale);
         }else {
             if((DrawMode)draw_mode_dropdown.value == DrawMode.NoiseMap) {
                 map_display.DrawNoiseMap(map);
