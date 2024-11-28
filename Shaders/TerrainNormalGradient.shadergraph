@@ -1012,10 +1012,10 @@
     "m_Guid": {
         "m_GuidSerialized": "4c44bb81-81b3-4025-a020-728a26c2fd92"
     },
-    "m_Name": "sand_edge",
+    "m_Name": "ground_edge",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "sand_edge",
-    "m_DefaultReferenceName": "_sand_edge",
+    "m_RefNameGeneratedByDisplayName": "ground_edge",
+    "m_DefaultReferenceName": "_ground_edge",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -1038,7 +1038,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector2MaterialSlot",
     "m_ObjectId": "0374f57c48594d2987dabca1ec30cc11",
     "m_Id": 0,
-    "m_DisplayName": "ground_tiling",
+    "m_DisplayName": "grass_tiling",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1691,9 +1691,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 1118.4000244140625,
-            "y": 972.0,
-            "width": 143.199951171875,
+            "x": 1129.5999755859375,
+            "y": 961.5999755859375,
+            "width": 144.0,
             "height": 33.5999755859375
         }
     },
@@ -1934,7 +1934,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector2MaterialSlot",
     "m_ObjectId": "312a93b73a814e5d8ed26f6179899615",
     "m_Id": 0,
-    "m_DisplayName": "slope_tiling",
+    "m_DisplayName": "dirt_tiling",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -2401,10 +2401,10 @@
     "m_Guid": {
         "m_GuidSerialized": "058846b8-5a71-42df-964d-e2d414853223"
     },
-    "m_Name": "sand_bottom",
+    "m_Name": "ground_bottom",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "sand_bottom",
-    "m_DefaultReferenceName": "_sand_bottom",
+    "m_RefNameGeneratedByDisplayName": "ground_bottom",
+    "m_DefaultReferenceName": "_ground_bottom",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -2541,7 +2541,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
     "m_ObjectId": "4c10bf85c42349e6b59d5be686fb9351",
     "m_Id": 0,
-    "m_DisplayName": "ground_texture",
+    "m_DisplayName": "grass_texture",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -2866,10 +2866,10 @@
     "m_Guid": {
         "m_GuidSerialized": "d97fe859-9c6c-4024-b873-583a8cf877a5"
     },
-    "m_Name": "slope_texture",
+    "m_Name": "dirt_texture",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "slope_texture",
-    "m_DefaultReferenceName": "_slope_texture",
+    "m_RefNameGeneratedByDisplayName": "dirt_texture",
+    "m_DefaultReferenceName": "_dirt_texture",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -2929,10 +2929,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -127.99998474121094,
-            "y": 1058.4000244140625,
+            "x": -128.0,
+            "y": 1059.199951171875,
             "width": 140.79998779296876,
-            "height": 33.5999755859375
+            "height": 33.60009765625
         }
     },
     "m_Slots": [
@@ -3749,10 +3749,10 @@
     "m_Guid": {
         "m_GuidSerialized": "ef3d7265-ccc0-4148-8483-f48a1e71130f"
     },
-    "m_Name": "slope_tiling",
+    "m_Name": "dirt_tiling",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "slope_tiling",
-    "m_DefaultReferenceName": "_slope_tiling",
+    "m_RefNameGeneratedByDisplayName": "dirt_tiling",
+    "m_DefaultReferenceName": "_dirt_tiling",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -3860,9 +3860,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -970.4000854492188,
-            "y": 36.00001525878906,
-            "width": 205.60003662109376,
+            "x": -971.2000732421875,
+            "y": 19.199966430664064,
+            "width": 206.4000244140625,
             "height": 128.80003356933595
         }
     },
@@ -3888,7 +3888,7 @@
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.GroupData",
     "m_ObjectId": "8bc269bf47064a46929fe90270fb2e26",
-    "m_Title": "ground/slope normal dot product lerp",
+    "m_Title": "ground slope normal dot product lerp",
     "m_Position": {
         "x": -1259.199951171875,
         "y": -499.20001220703127
@@ -3902,10 +3902,10 @@
     "m_Guid": {
         "m_GuidSerialized": "2a084ec9-ae9a-4a93-8a6d-b0bd0c8b0172"
     },
-    "m_Name": "ground_texture",
+    "m_Name": "grass_texture",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "ground_texture",
-    "m_DefaultReferenceName": "_ground_texture",
+    "m_RefNameGeneratedByDisplayName": "grass_texture",
+    "m_DefaultReferenceName": "_grass_texture",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -4003,7 +4003,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "91d9ac3e2b794e938f92c95944e43d12",
     "m_Id": 0,
-    "m_DisplayName": "sand_edge",
+    "m_DisplayName": "ground_edge",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -4020,10 +4020,10 @@
     "m_Guid": {
         "m_GuidSerialized": "572f79a5-cd9b-4f05-b124-fa9100276b9e"
     },
-    "m_Name": "ground_tiling",
+    "m_Name": "grass_tiling",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "ground_tiling",
-    "m_DefaultReferenceName": "_ground_tiling",
+    "m_RefNameGeneratedByDisplayName": "grass_tiling",
+    "m_DefaultReferenceName": "_grass_tiling",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -4227,7 +4227,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "9c219e1cca934f72ada8dfac960e6904",
     "m_Id": 0,
-    "m_DisplayName": "sand_bottom",
+    "m_DisplayName": "ground_bottom",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -4622,7 +4622,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
     "m_ObjectId": "acbdd39f8ab946a6a01b07e757684b2f",
     "m_Id": 0,
-    "m_DisplayName": "slope_texture",
+    "m_DisplayName": "dirt_texture",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -4835,10 +4835,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -128.00001525878907,
-            "y": -207.2000274658203,
-            "width": 208.0000762939453,
-            "height": 325.5999755859375
+            "x": -94.40003967285156,
+            "y": -240.80003356933595,
+            "width": 208.00001525878907,
+            "height": 325.60003662109377
         }
     },
     "m_Slots": [
@@ -5486,7 +5486,7 @@
         "m_Position": {
             "serializedVersion": "2",
             "x": -918.4000854492188,
-            "y": -141.5999755859375,
+            "y": -140.80001831054688,
             "width": 153.60003662109376,
             "height": 141.60000610351563
         }
@@ -5660,8 +5660,8 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -116.80001068115235,
-            "y": 1112.800048828125,
+            "x": -116.8000259399414,
+            "y": 1116.0,
             "width": 129.60000610351563,
             "height": 33.5999755859375
         }

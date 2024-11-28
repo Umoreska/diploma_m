@@ -2,14 +2,10 @@
 using UnityEngine.UI;
 using Cinemachine;
 using UnityEngine;
-using System.IO;
 using TMPro;
 using UnityEditor.Formats.Fbx.Exporter;
 using Autodesk.Fbx;
-using UnityEditor;
-using Unity.IntegerTime;
 using SimpleFileBrowser;
-using System;
 
 
 public class UIController : MonoBehaviour
@@ -24,6 +20,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private MapDisplay map_display;
     [SerializeField] private GameObject[] trees;
     [SerializeField] private MapGenerator map_generator;
+    [SerializeField] private TMP_InputField infinite_seed_input;
     [SerializeField] private GameObject size_input, draw_mode_input, scale_input, seed_input, offset_x_input, offset_y_input, roughness_input, octaves_input, persistance_input, 
                                     lacunarity_input, point_count_input, max_height_input, water_height_input, dla_initial_input, dla_steps_input, erosion_panel, trees_panel;
     [SerializeField] private TMP_Dropdown algorithm_dropdown, draw_mode_dropdown, size_dropdown;
@@ -36,8 +33,9 @@ public class UIController : MonoBehaviour
     private HeightMapAlgorithm algorithm;
 
     private void Start() {
-        //terrain_data = terrain.terrainData;
         mesh_collider = mesh_transform.GetComponent<MeshCollider>();
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void GenerateOnInputChange(bool generate_on_input_change) {
@@ -116,8 +114,7 @@ public class UIController : MonoBehaviour
         }
         bool use_flat_shading = false; // read from user
         map_display.DrawMesh(map, max_height_slider.value, map_generator.terrain_data.mesh_height_curve, use_flat_shading);
-        mesh_collider.sharedMesh = null;
-        mesh_collider.sharedMesh = mesh_transform.GetComponent<MeshFilter>().sharedMesh;
+        UpdateMeshColliderAndWater();
     }
 
  
@@ -318,7 +315,8 @@ public class UIController : MonoBehaviour
 		// Initial path: "C:\", Initial filename: "Screenshot.png"
 		// Title: "Save As", Submit button text: "Save"
 		FileBrowser.ShowSaveDialog( (paths)=> {
-            ExportMeshToFbx(paths[0]);            
+            //ExportMeshToFbx(paths[0]);            
+            FBXExporter.ExportSingleObject(mesh_transform.gameObject, paths[0]);
         }, null, FileBrowser.PickMode.Files, false, "C:\\", "terrain.fbx", "Save As", "Save" );
 
 		// Example 2: Show a select folder dialog using callback approach
@@ -420,11 +418,7 @@ public class UIController : MonoBehaviour
         if(draw_mode == DrawMode.Mesh) {
             bool use_flat_shading = false; // read from user
             map_display.DrawMesh(map, max_height_slider.value, map_generator.terrain_data.mesh_height_curve, use_flat_shading);
-            mesh_collider.sharedMesh = null;
-            mesh_collider.sharedMesh = mesh_transform.GetComponent<MeshFilter>().sharedMesh;
-
-            float scale = mesh_transform.transform.localScale.x;
-            water_transform.localScale = new Vector3(map.GetLength(0)/scale, 1, map.GetLength(1)/scale);
+            UpdateMeshColliderAndWater();
         }else {
             if((DrawMode)draw_mode_dropdown.value == DrawMode.NoiseMap) {
                 map_display.DrawNoiseMap(map);
@@ -432,6 +426,14 @@ public class UIController : MonoBehaviour
                 map_display.DrawColorMap(map);
             }
         }
+    }
+
+    public void UpdateMeshColliderAndWater() {
+        mesh_collider.sharedMesh = null;
+        mesh_collider.sharedMesh = mesh_transform.GetComponent<MeshFilter>().sharedMesh;
+
+        float scale = mesh_transform.transform.localScale.x;
+        water_transform.localScale = new Vector3(map.GetLength(0)/scale, 1, map.GetLength(1)/scale);
     }
 
     public void SetAlgorithm(int index) {
@@ -479,7 +481,19 @@ public class UIController : MonoBehaviour
                 Debug.LogWarning("Set undefined algorithm: " + algorithm);
                 Debug.Break();
             break;
-        }
-        
+        }        
     }
+
+
+
+    public void LoadInfiniteTerrain() {
+        int seed = 42;
+        if(int.TryParse(infinite_seed_input.text, out seed)) {
+            map_generator.ChangeNoiseSeed(seed);
+        }else {
+            map_generator.ChangeNoiseSeed(seed);
+        }            
+        ScenesManager.LoadScene(ScenesManager.Scenes.InfiniteTerrainGeneration);
+    }
+
 }

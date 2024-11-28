@@ -6,7 +6,7 @@ namespace AsciiFBXExporter
 	/// Simple mono component that shows how to export an object at runtime.
 	/// Attach this to any game object and assign RootObjectToExport
 	/// </summary>
-	public class RuntimeExporterMono : MonoBehaviour
+	/*public class RuntimeExporterMono : MonoBehaviour
 	{
 		public GameObject rootObjectToExport;
 		public string AbsolutePath = "/Users/kellan/Projects/AsciiFBXExporterForUnity/Build/";
@@ -86,5 +86,5 @@ namespace AsciiFBXExporter
 #endif
 			return exported;
 		}
-	}
+	}*/
 }

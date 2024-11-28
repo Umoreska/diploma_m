@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: DefaultTerrainData
   m_EditorClassIdentifier: 
   auto_update: 1
-  uniform_scale: 2
+  uniform_scale: 1
   useFlatShading: 0
   useFalloff: 0
-  heightMultiplier: 40
+  heightMultiplier: 100
   mesh_height_curve:
     serializedVersion: 2
     m_Curve:

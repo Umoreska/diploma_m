@@ -28,7 +28,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float place_on_surface_delay = 0.1f;
     [SerializeField] private float ray_check_height = 50f;
-    private Action on_key_pressed_e=null;
+    private Action on_key_pressed_e=null, on_key_pressed_r=null;
+
     void Start() {
 
         // Блокуємо курсор у центрі екрана
@@ -47,6 +48,10 @@ public class PlayerController : MonoBehaviour
 
         if(Input.GetKey(KeyCode.E)) {
             on_key_pressed_e?.Invoke();
+        }
+
+        if(Input.GetKey(KeyCode.R)) {
+            on_key_pressed_r?.Invoke();
         }
 
         isGrounded = controller.isGrounded;
@@ -121,6 +126,10 @@ public class PlayerController : MonoBehaviour
 
     public void SetActionOnKeyE(Action act) {
         on_key_pressed_e = act;
+    }
+
+    public void SetActionOnKeyR(Action act) {
+        on_key_pressed_r = act;
     }
 
 }

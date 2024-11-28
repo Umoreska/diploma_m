@@ -60,7 +60,7 @@ Transform:
   m_GameObject: {fileID: 3569601813352066754}
   serializedVersion: 2
   m_LocalRotation: {x: 0.12696008, y: -0, z: -0, w: 0.9919079}
-  m_LocalPosition: {x: 0, y: 2.7, z: -3.61}
+  m_LocalPosition: {x: 0, y: 2.433, z: -2.429}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -219,7 +219,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: d0a7d37d7652e3e40a30b7a1aeddb1a7,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d0a7d37d7652e3e40a30b7a1aeddb1a7,
         type: 3}
@@ -363,8 +363,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
-  ground_moving_speed: 5
-  air_moving_speed_mod: 0.8
   movementSpeed: 5
   gravity: -9.81
   jumpHeight: 1.5

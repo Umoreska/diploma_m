@@ -37,6 +37,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _dirt_texture:
+        m_Texture: {fileID: 2800000, guid: 17405fba9d20b47408239b3e82d60232, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _grass_texture:
+        m_Texture: {fileID: 2800000, guid: 94e5dd2784ae3a44a930dba86cba9f6e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _rock_texture:
         m_Texture: {fileID: 2800000, guid: 3f893818068c13c498261af150bea6f3, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -73,18 +81,23 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _ground_bottom: 1
+    - _ground_edge: 2
     - _ground_rock_power: 2.5
+    - _ground_slope_power: 2
     - _mountain_rock_power: 3
-    - _rock_bottom: 8
-    - _rock_edge: 4
+    - _rock_bottom: 15
+    - _rock_edge: 25
     - _rock_height: 153.2
     - _sand_bottom: -0.32
     - _sand_edge: 0
     - _snow_bottom: 16
-    - _snow_edge: 4
+    - _snow_edge: 25
     - _snow_height: 211.7
     m_Colors:
     - _Color: {r: 0, g: 0, b: 0, a: 0}
+    - _dirt_tiling: {r: 5, g: 5, b: 0, a: 0}
+    - _grass_tiling: {r: 5, g: 5, b: 0, a: 0}
     - _in_min_max: {r: 0.25, g: 1, b: 0, a: 0}
     - _in_min_max_dotProduct_clamp: {r: 0.5, g: 1, b: 0, a: 0}
     - _in_min_max_dotProduct_res: {r: 0.5, g: 1, b: 0, a: 0}

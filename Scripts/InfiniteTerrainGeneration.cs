@@ -27,10 +27,11 @@ public class InfiniteTerrainGeneration : MonoBehaviour
     int chunkVisibleAmount; // in view distance
 
     Dictionary<Vector2, TerrainChunk> terrain_chunk_dictionary = new Dictionary<Vector2, TerrainChunk>();
-    static private  List<TerrainChunk> visible_chunk_last_update = new List<TerrainChunk>();
+    static private  List<TerrainChunk> visible_chunk_last_update;
     [SerializeField] private Material mapMaterial;
 
     private void Start() {
+        visible_chunk_last_update = new List<TerrainChunk>();
         mapGenerator = FindFirstObjectByType<MapGenerator>();
 
         max_view_dist = detailLevels[detailLevels.Length-1].visible_distance_threshold;
@@ -82,15 +83,17 @@ public class InfiniteTerrainGeneration : MonoBehaviour
                 Vector2 chunk_coord = new Vector2(current_chunk_coord_x + offset_x, current_chunk_coord_y + offset_y);
                 Vector3 chunk_position_on_scene = new Vector3(chunk_coord.x*chunk_size, 0, chunk_coord.y*chunk_size) * mapGenerator.terrain_data.uniform_scale;
 
-                if(offset_x == 0 && offset_y == 0) { // chunk viewer standing on
+                if(MathF.Abs(offset_x) <= 1 && offset_y == 0 || MathF.Abs(offset_y) <= 1 && offset_x == 0 || // sides
+                  (MathF.Abs(offset_y) == 1 && MathF.Abs(offset_x) == 1)) { // corners
                     if(terrain_chunk_dictionary.ContainsKey(chunk_coord)) {
                         terrain_chunk_dictionary[chunk_coord].UpdateChunk();
                     }else {
                         terrain_chunk_dictionary.Add(chunk_coord, new TerrainChunk(terrain_prefab, chunk_coord, chunk_size, detailLevels, this.transform, mapMaterial));
                     }
                     continue;
-                }else if(MathF.Abs(offset_x) == 1 && offset_y == 0 || MathF.Abs(offset_y) == 1 && offset_x == 0) {
-                    if(IsChunkOnRightOrLeft(main_camera.transform.position, main_camera.transform.forward, chunk_position_on_scene, viewAngle)) {
+                }
+                /*else if(MathF.Abs(offset_x) == 1 && offset_y == 0 || MathF.Abs(offset_y) == 1 && offset_x == 0) {
+                    if(true || IsChunkOnRightOrLeft(main_camera.transform.position, main_camera.transform.forward, chunk_position_on_scene, viewAngle)) {
                         if(terrain_chunk_dictionary.ContainsKey(chunk_coord)) {
                             terrain_chunk_dictionary[chunk_coord].UpdateChunk();
                         }else {
@@ -98,7 +101,7 @@ public class InfiniteTerrainGeneration : MonoBehaviour
                         }
                         continue;
                     }
-                }
+                }*/
                 
                 /*if(chunkUpdateMode == ChunkUpdateMode.Square || 
                 (chunkUpdateMode == ChunkUpdateMode.OnlyView && IsObjectInView(main_camera.transform.position, main_camera.transform.forward, chunk_position_on_scene, viewAngle))){
@@ -297,6 +300,11 @@ public class InfiniteTerrainGeneration : MonoBehaviour
 
         public void SetVisible(bool visible) {
             meshObject.SetActive(visible);
+        }
+
+        void OnDisable() {
+            // Clear any cached references before the object is destroyed
+            meshObject = null;
         }
 
         public bool IsVisible() => meshObject.activeSelf;
