@@ -8,7 +8,7 @@ public class SliderValueText : MonoBehaviour
 {
     private TMP_Text text;
 
-    private void Start() {
+    private void Awake() {
         text = GetComponent<TMP_Text>();
     }
 

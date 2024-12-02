@@ -86,11 +86,13 @@ Material:
     - _ground_rock_power: 2.5
     - _ground_slope_power: 2
     - _mountain_rock_power: 3
+    - _mountain_slope_power: 1
     - _rock_bottom: 15
     - _rock_edge: 25
     - _rock_height: 153.2
     - _sand_bottom: -0.32
-    - _sand_edge: 0
+    - _sand_edge: 1
+    - _sand_top: 0
     - _snow_bottom: 16
     - _snow_edge: 25
     - _snow_height: 211.7

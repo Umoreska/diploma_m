@@ -21,7 +21,7 @@ Material:
   stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
-  m_LockedProperties: 
+  m_LockedProperties: _sand_texture
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -89,19 +89,22 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _ground_bottom: 30
-    - _ground_edge: 10
+    - _ground_bottom: 106.996346
+    - _ground_edge: 1000
     - _ground_rock_power: 0
-    - _ground_slope_power: 1.5
+    - _ground_slope_power: 2.3306804
     - _mountain_rock_power: 0
-    - _rock_bottom: 100
-    - _rock_edge: 50
+    - _mountain_slope_power: 1.795467
+    - _rock_bottom: 164.66672
+    - _rock_edge: 140.05516
     - _rock_height: 153.2
     - _sand_bottom: -3.12
-    - _sand_edge: 10
-    - _snow_bottom: 200
-    - _snow_edge: 100
+    - _sand_edge: 52.100655
+    - _sand_top: 78.62174
+    - _snow_bottom: 228.16982
+    - _snow_edge: 44.363174
     - _snow_height: 211.7
+    - mountain_slope_power: 2
     m_Colors:
     - _Color: {r: 0, g: 0, b: 0, a: 0}
     - _dirt_tiling: {r: 50, g: 50, b: 0, a: 0}

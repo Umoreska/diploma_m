@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,6 +15,7 @@ public class InfiniteTerrainGeneration : MonoBehaviour
     private const float squared_viewer_move_distance_threshold_for_update = viewer_move_distance_threshold_for_update*viewer_move_distance_threshold_for_update;
     private const float viewer_rotate_angle_threshold_for_update = 5f;
     public GameObject terrain_prefab;
+    [SerializeField] private TMP_Text chunk_update_mode_text;
     [SerializeField] private ChunkUpdateMode chunkUpdateMode = 0;
     [SerializeField] private Camera main_camera;
     [SerializeField] private float viewAngle = 90f;
@@ -30,6 +32,24 @@ public class InfiniteTerrainGeneration : MonoBehaviour
     static private  List<TerrainChunk> visible_chunk_last_update;
     [SerializeField] private Material mapMaterial;
 
+    public void GetInfoAboutChunks(out int all, out int active) {
+        all = terrain_chunk_dictionary.Count;
+        active = 0;
+        foreach (var chunk in terrain_chunk_dictionary){
+            if(chunk.Value.IsActive()) {
+                active++;
+            }
+        }
+    }
+
+    
+    public string UpdateMode{
+        get {
+            return chunkUpdateMode.ToString();
+        }
+        private set {}
+    }
+
     private void Start() {
         visible_chunk_last_update = new List<TerrainChunk>();
         mapGenerator = FindFirstObjectByType<MapGenerator>();
@@ -41,6 +61,13 @@ public class InfiniteTerrainGeneration : MonoBehaviour
 
         UpdateVisibleChunks();
         //ground_layer = LayerMask.NameToLayer("Ground") ;
+
+        chunk_update_mode_text.text = "Chunk Update Mode: " + chunkUpdateMode.ToString();
+    }
+
+    public void ChangeUpdateMode(ChunkUpdateMode mode) {
+        chunkUpdateMode = mode;
+        chunk_update_mode_text.text = "Chunk Update Mode: " + chunkUpdateMode.ToString();
     }
 
     private void Update() {
@@ -204,6 +231,8 @@ public class InfiniteTerrainGeneration : MonoBehaviour
         private MapData map_data;
         private bool map_data_received;
         private int prev_lod_index = -1; // it has to be updated first time
+
+        public bool IsActive() => meshObject.activeInHierarchy;
 
         public TerrainChunk(GameObject terrain_prefab, Vector2 coord, int size, LODInfo[] detail_level, Transform parent, Material material, bool auto_update=true) {
             this.detail_level = detail_level;

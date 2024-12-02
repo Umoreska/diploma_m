@@ -47,6 +47,25 @@ public class Tester : MonoBehaviour
         }
     }
 
+    private IEnumerator WriteChunkData(float delta_time, int rows_count=1) {
+        int rows_written = 0;
+        List<DatasetCreator.CSVChunkData> data = new List<DatasetCreator.CSVChunkData>();
+        while(rows_written < rows_count) {
+
+            infiniteTerrainGeneration.GetInfoAboutChunks(out int all, out int active);
+            data.Add(new DatasetCreator.CSVChunkData{
+                UpdateMode = infiniteTerrainGeneration.UpdateMode,
+                ChunkCount = all,
+                ActiveChunkCount = active,
+                FPS = (int)(1 / Time.deltaTime)
+            });
+
+            rows_written++;
+            yield return new WaitForSeconds(delta_time);
+        }
+        DatasetCreator.WriteToCsv("", data, true);
+    }
+
     public void TestMeshTerrainSpeedGeneration() {
 
         if (Application.isPlaying) {

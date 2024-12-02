@@ -56,6 +56,8 @@ public class MapGenerator : MonoBehaviour {
 		noise_data.seed = seed;
 	}
 
+	public int GetNoiseSeed() => noise_data.seed;
+
 	private MapData GenerateMapData(Vector2 center) {
 		
         float[,] noiseMap = FractalPerlinNoise.GenerateHeights(mapChunkSize+2, // 239+2 = 241

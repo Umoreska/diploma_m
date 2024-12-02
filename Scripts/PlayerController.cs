@@ -7,7 +7,7 @@ using System;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
-
+    private InfiniteTerrainGeneration infinite_terrain;
     public CharacterController controller;
 
     [Header("Movement Settings")]
@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Mouse Settings")]
     public float mouseSensitivity = 2f; // Чутливість миші
+    public float zoomSpeed = 2f; // Чутливість миші
     private Transform cameraTransform; // Посилання на камеру
     private float verticalRotation = 0f; // Поточна вертикальна орієнтація камери
 
@@ -31,7 +32,7 @@ public class PlayerController : MonoBehaviour
     private Action on_key_pressed_e=null, on_key_pressed_r=null;
 
     void Start() {
-
+        infinite_terrain = FindAnyObjectByType<InfiniteTerrainGeneration>();
         // Блокуємо курсор у центрі екрана
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -52,6 +53,18 @@ public class PlayerController : MonoBehaviour
 
         if(Input.GetKey(KeyCode.R)) {
             on_key_pressed_r?.Invoke();
+        }
+
+        if(Input.GetKey(KeyCode.Alpha1) && infinite_terrain != null) {
+            infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.Square);
+        }
+
+        if(Input.GetKey(KeyCode.Alpha2) && infinite_terrain != null) {
+            infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.OnlyView);
+        }
+
+        if(Input.GetKey(KeyCode.Alpha3) && infinite_terrain != null) {
+            infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.ViewPreload);
         }
 
         isGrounded = controller.isGrounded;
@@ -96,9 +109,8 @@ public class PlayerController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity); // jump formula !!!
             animator.SetTrigger("jump");
         }
-
-        isGrounded_prev_frame = isGrounded;
         
+        isGrounded_prev_frame = isGrounded;
     }
 
     
@@ -118,7 +130,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"{rayStartPos} -> {rayStartPos+Vector3.down*ray_check_height*2}");
         
         if (Physics.Raycast(ray, out hit, ray_check_height*2)) {
-            transform.position = new Vector3(characterPosition.x, hit.point.y, characterPosition.z);
+            transform.position = new Vector3(characterPosition.x, hit.point.y+3f, characterPosition.z);
         } else {
             Debug.LogWarning("No collision detected. The ray missed any colliders.");
         }

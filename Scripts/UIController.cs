@@ -13,7 +13,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private Transform mesh_transform, water_transform;
     [SerializeField] private float min_water_height=-13f;
     private MeshCollider mesh_collider;
-    [SerializeField] private GameObject player_prefab, editor_cameras, noise_settings, return_to_editor_hint, place_player_btn;
+    [SerializeField] private GameObject player_prefab, editor_cameras, noise_settings, return_to_editor_hint, place_player_btn, infinite_generation_btns, shader_input_togglers;
     private PlayerController player=null;
     [SerializeField] private Erosion erosion;
     [SerializeField] private DrawMode draw_mode;
@@ -73,9 +73,11 @@ public class UIController : MonoBehaviour
     public void ReturnToEditor() {
         player.gameObject.SetActive(false);
         return_to_editor_hint.SetActive(false);
+        
         editor_cameras.SetActive(true);
         noise_settings.SetActive(true);
         place_player_btn.SetActive(true);
+        infinite_generation_btns.SetActive(true);
 
 
         Cursor.lockState = CursorLockMode.None;
@@ -89,8 +91,10 @@ public class UIController : MonoBehaviour
         camera_on_plane.transform.localPosition = Vector3.zero;
 
         draw_mode_input.SetActive(true);
+        
         max_height_input.SetActive(false);
         water_height_input.SetActive(false);
+        shader_input_togglers.SetActive(false);
 
         draw_mode_dropdown.value = (int)DrawMode.ColorMap;
         draw_mode = DrawMode.ColorMap;
@@ -102,8 +106,10 @@ public class UIController : MonoBehaviour
         camera_on_terrain.transform.localPosition = Vector3.zero;
 
         draw_mode_input.SetActive(false);
+        
         max_height_input.SetActive(true);
         water_height_input.SetActive(true);
+        shader_input_togglers.SetActive(true);
 
         draw_mode = DrawMode.Mesh;
     }
@@ -180,7 +186,7 @@ public class UIController : MonoBehaviour
                 }
             }
 
-        }else { // fuck
+        }else {
             Debug.Log($"they have different size: {map.GetLength(0)}:{new_map.GetLength(0)}");
             
             if(map.GetLength(0) < new_map.GetLength(0)) { // just cut unused part of new_map
@@ -216,10 +222,8 @@ public class UIController : MonoBehaviour
         // Масштабування коефіцієнтів
         float scale = (float)(oldSize - 1) / (newSize - 1);
 
-        for (int x = 0; x < newSize; x++)
-        {
-            for (int y = 0; y < newSize; y++)
-            {
+        for (int x = 0; x < newSize; x++) {
+            for (int y = 0; y < newSize; y++) {
                 // Позиція у старій мапі (з float-координатами)
                 float oldX = x * scale;
                 float oldY = y * scale;
@@ -287,12 +291,12 @@ public class UIController : MonoBehaviour
 		// It is sufficient to set the filters just once (instead of each time before showing the file browser dialog), 
 		// if all the dialogs will be using the same filters
 		//FileBrowser.SetFilters( true, new FileBrowser.Filter( "Images", ".jpg", ".png" ), new FileBrowser.Filter( "Text Files", ".txt", ".pdf" ) );
-		FileBrowser.SetFilters( true, new FileBrowser.Filter( "3D Files", ".fbx") );
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "3D Files", ".obj") );
 
 		// Set default filter that is selected when the dialog is shown (optional)
 		// Returns true if the default filter is set successfully
 		// In this case, set Images filter as the default filter
-		FileBrowser.SetDefaultFilter( ".fbx" );
+		FileBrowser.SetDefaultFilter( ".obj" );
 
 		// Set excluded file extensions (optional) (by default, .lnk and .tmp extensions are excluded)
 		// Note that when you use this function, .lnk and .tmp extensions will no longer be
@@ -315,9 +319,10 @@ public class UIController : MonoBehaviour
 		// Initial path: "C:\", Initial filename: "Screenshot.png"
 		// Title: "Save As", Submit button text: "Save"
 		FileBrowser.ShowSaveDialog( (paths)=> {
-            //ExportMeshToFbx(paths[0]);            
-            FBXExporter.ExportSingleObject(mesh_transform.gameObject, paths[0]);
-        }, null, FileBrowser.PickMode.Files, false, "C:\\", "terrain.fbx", "Save As", "Save" );
+            //ExportMeshToFbx(paths[0]); // works only in edit            
+            //FBXExporter.ExportSingleObject(mesh_transform.gameObject, paths[0]); // infinite loop? does not work
+            ObjExporter.ExportMeshToObj(mesh_transform.gameObject, paths[0]);
+        }, null, FileBrowser.PickMode.Files, false, "C:\\", "terrain.obj", "Save As", "Save" );
 
 		// Example 2: Show a select folder dialog using callback approach
 		// onSuccess event: print the selected folder's path
