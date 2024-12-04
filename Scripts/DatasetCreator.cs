@@ -62,8 +62,10 @@ public class DatasetCreator : MonoBehaviour
 
     public static void WriteToCsv(string filePath, List<CSVChunkData> data, bool append=false) {
         using (var writer = new StreamWriter(filePath, append)) {
-            string first_line = "UpdateMode;ChunkCount;ActiveChunkCount;FPS";
-            writer.WriteLine(first_line);
+            if(append == false) {
+                string first_line = "UpdateMode;ChunkCount;ActiveChunkCount;FPS";
+                writer.WriteLine(first_line);
+            }
             // Приклад циклу для додавання рядків
             for (int i = 0; i < data.Count; i++) {
                 // Створюємо рядок для запису
@@ -72,7 +74,8 @@ public class DatasetCreator : MonoBehaviour
                 // Записуємо рядок у файл
                 writer.WriteLine(line);
             }
-        } 
+        }
+        Debug.Log($"DONE WRITING TO {filePath}");
     }
 
 

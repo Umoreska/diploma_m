@@ -35,6 +35,7 @@ public class Tester : MonoBehaviour
             // 
             infiniteTerrainGeneration.enabled = true;
             StartCoroutine(MovePlayerOnTerrain());
+            StartCoroutine(WriteChunkData("ChunkData.csv", 1f, 100));
             break;
         }
     }
@@ -47,9 +48,10 @@ public class Tester : MonoBehaviour
         }
     }
 
-    private IEnumerator WriteChunkData(float delta_time, int rows_count=1) {
+    private IEnumerator WriteChunkData(string csv_file_name, float delta_time, int rows_count=1) {
         int rows_written = 0;
         List<DatasetCreator.CSVChunkData> data = new List<DatasetCreator.CSVChunkData>();
+        Debug.Log($"creating chunk data");
         while(rows_written < rows_count) {
 
             infiniteTerrainGeneration.GetInfoAboutChunks(out int all, out int active);
@@ -61,9 +63,11 @@ public class Tester : MonoBehaviour
             });
 
             rows_written++;
+            Debug.Log($"rows written: {rows_written}");
             yield return new WaitForSeconds(delta_time);
         }
-        DatasetCreator.WriteToCsv("", data, true);
+        Debug.Log($"writing to {csv_file_name}...");
+        DatasetCreator.WriteToCsv(csv_file_name, data, true);
     }
 
     public void TestMeshTerrainSpeedGeneration() {

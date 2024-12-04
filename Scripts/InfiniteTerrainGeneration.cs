@@ -62,7 +62,9 @@ public class InfiniteTerrainGeneration : MonoBehaviour
         UpdateVisibleChunks();
         //ground_layer = LayerMask.NameToLayer("Ground") ;
 
-        chunk_update_mode_text.text = "Chunk Update Mode: " + chunkUpdateMode.ToString();
+        if(chunk_update_mode_text != null) {
+            chunk_update_mode_text.text = "Chunk Update Mode: " + chunkUpdateMode.ToString();
+        }
     }
 
     public void ChangeUpdateMode(ChunkUpdateMode mode) {

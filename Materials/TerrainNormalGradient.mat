@@ -94,8 +94,8 @@ Material:
     - _ground_rock_power: 0
     - _ground_slope_power: 2.3306804
     - _mountain_rock_power: 0
-    - _mountain_slope_power: 1.795467
-    - _rock_bottom: 164.66672
+    - _mountain_slope_power: 2.0310154
+    - _rock_bottom: 144.66672
     - _rock_edge: 140.05516
     - _rock_height: 153.2
     - _sand_bottom: -3.12
