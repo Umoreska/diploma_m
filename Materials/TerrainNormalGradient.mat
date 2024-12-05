@@ -92,17 +92,17 @@ Material:
     - _ground_bottom: 106.996346
     - _ground_edge: 1000
     - _ground_rock_power: 0
-    - _ground_slope_power: 2.3306804
+    - _ground_slope_power: 0.7066643
     - _mountain_rock_power: 0
-    - _mountain_slope_power: 2.0310154
-    - _rock_bottom: 144.66672
-    - _rock_edge: 140.05516
+    - _mountain_slope_power: 0.91104627
+    - _rock_bottom: 157.60039
+    - _rock_edge: 112.84563
     - _rock_height: 153.2
     - _sand_bottom: -3.12
-    - _sand_edge: 52.100655
-    - _sand_top: 78.62174
-    - _snow_bottom: 228.16982
-    - _snow_edge: 44.363174
+    - _sand_edge: 25.691732
+    - _sand_top: 30.402464
+    - _snow_bottom: 247.00081
+    - _snow_edge: 61.023926
     - _snow_height: 211.7
     - mountain_slope_power: 2
     m_Colors:

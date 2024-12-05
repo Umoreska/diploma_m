@@ -291,12 +291,12 @@ public class UIController : MonoBehaviour
 		// It is sufficient to set the filters just once (instead of each time before showing the file browser dialog), 
 		// if all the dialogs will be using the same filters
 		//FileBrowser.SetFilters( true, new FileBrowser.Filter( "Images", ".jpg", ".png" ), new FileBrowser.Filter( "Text Files", ".txt", ".pdf" ) );
-		FileBrowser.SetFilters( true, new FileBrowser.Filter( "3D Files", ".obj") );
+		FileBrowser.SetFilters( true, new FileBrowser.Filter( "3D Files", ".gltf") );
 
 		// Set default filter that is selected when the dialog is shown (optional)
 		// Returns true if the default filter is set successfully
 		// In this case, set Images filter as the default filter
-		FileBrowser.SetDefaultFilter( ".obj" );
+		FileBrowser.SetDefaultFilter( ".gltf" );
 
 		// Set excluded file extensions (optional) (by default, .lnk and .tmp extensions are excluded)
 		// Note that when you use this function, .lnk and .tmp extensions will no longer be
@@ -321,8 +321,9 @@ public class UIController : MonoBehaviour
 		FileBrowser.ShowSaveDialog( (paths)=> {
             //ExportMeshToFbx(paths[0]); // works only in edit            
             //FBXExporter.ExportSingleObject(mesh_transform.gameObject, paths[0]); // infinite loop? does not work
-            ObjExporter.ExportMeshToObj(mesh_transform.gameObject, paths[0]);
-        }, null, FileBrowser.PickMode.Files, false, "C:\\", "terrain.obj", "Save As", "Save" );
+            //ObjExporter.ExportMeshToObj(mesh_transform.gameObject, paths[0]); // bad
+            GLTFastExporter.SimpleExport(new GameObject[]{mesh_transform.gameObject}, paths[0]);
+        }, null, FileBrowser.PickMode.Files, false, "C:\\", "terrain.gltf", "Save As", "Save" );
 
 		// Example 2: Show a select folder dialog using callback approach
 		// onSuccess event: print the selected folder's path

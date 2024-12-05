@@ -19,6 +19,7 @@ public class Tester : MonoBehaviour
     [SerializeField] private InfiniteTerrainGeneration infiniteTerrainGeneration;
     [SerializeField] private GameObject player;
     [SerializeField] private float player_speed, rotation_speed;
+    [SerializeField] private bool append=false;
     void Start()
     {
         infiniteTerrainGeneration.enabled = false;
@@ -35,7 +36,7 @@ public class Tester : MonoBehaviour
             // 
             infiniteTerrainGeneration.enabled = true;
             StartCoroutine(MovePlayerOnTerrain());
-            StartCoroutine(WriteChunkData("ChunkData.csv", 1f, 100));
+            StartCoroutine(WriteChunkData("ChunkData2.csv", 1f, 100));
             break;
         }
     }
@@ -67,7 +68,7 @@ public class Tester : MonoBehaviour
             yield return new WaitForSeconds(delta_time);
         }
         Debug.Log($"writing to {csv_file_name}...");
-        DatasetCreator.WriteToCsv(csv_file_name, data, true);
+        DatasetCreator.WriteToCsv(csv_file_name, data, append);
     }
 
     public void TestMeshTerrainSpeedGeneration() {
