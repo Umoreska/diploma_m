@@ -25,18 +25,18 @@ public class Tester : MonoBehaviour
         infiniteTerrainGeneration.enabled = false;
         switch(test_mode) {
             case TestMode.Noise:
-            // test noise generation
-            TestBuiltInNoiseAndImprovedNoiseSpeed();
+                // test noise generation
+                //TestBuiltInNoiseAndImprovedNoiseSpeed();
+                DatasetCreator.CreateHeightMapCSV("HeightMapData.csv");
             break;
             case TestMode.Mesh:
-            // test mesh creation
-            TestMeshTerrainSpeedGeneration();
+                // test mesh creation
+                TestMeshTerrainSpeedGeneration();
             break;
             case TestMode.ChunkUpdate:
-            // 
-            infiniteTerrainGeneration.enabled = true;
-            StartCoroutine(MovePlayerOnTerrain());
-            StartCoroutine(WriteChunkData("ChunkData2.csv", 1f, 100));
+                infiniteTerrainGeneration.enabled = true;
+                StartCoroutine(MovePlayerOnTerrain());
+                StartCoroutine(WriteChunkData("ChunkData.csv", 1f, 100));
             break;
         }
     }

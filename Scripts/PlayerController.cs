@@ -47,26 +47,6 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded_prev_frame = true;
     void Update() {
 
-        if(Input.GetKey(KeyCode.E)) {
-            on_key_pressed_e?.Invoke();
-        }
-
-        if(Input.GetKey(KeyCode.R)) {
-            on_key_pressed_r?.Invoke();
-        }
-
-        if(Input.GetKey(KeyCode.Alpha1) && infinite_terrain != null) {
-            infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.Square);
-        }
-
-        if(Input.GetKey(KeyCode.Alpha2) && infinite_terrain != null) {
-            infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.OnlyView);
-        }
-
-        if(Input.GetKey(KeyCode.Alpha3) && infinite_terrain != null) {
-            infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.ViewPreload);
-        }
-
         isGrounded = controller.isGrounded;
 
         if (isGrounded && velocity.y < 0)
@@ -108,6 +88,27 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump") && isGrounded) {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity); // jump formula !!!
             animator.SetTrigger("jump");
+        }
+
+        
+        if(Input.GetKey(KeyCode.E)) {
+            on_key_pressed_e?.Invoke();
+        }
+
+        if(Input.GetKey(KeyCode.R)) {
+            on_key_pressed_r?.Invoke();
+        }
+
+        if(Input.GetKey(KeyCode.Alpha1) && infinite_terrain != null) {
+            infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.Square);
+        }
+
+        if(Input.GetKey(KeyCode.Alpha2) && infinite_terrain != null) {
+            infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.OnlyView);
+        }
+
+        if(Input.GetKey(KeyCode.Alpha3) && infinite_terrain != null) {
+            infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.ViewPreload);
         }
         
         isGrounded_prev_frame = isGrounded;

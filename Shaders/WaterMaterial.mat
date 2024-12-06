@@ -76,9 +76,9 @@ Material:
     - _strength: 0.01
     - _waves_speed: 1
     m_Colors:
-    - _deep_color: {r: 0.3568626, g: 0.6543391, b: 0.72156864, a: 0.62352943}
+    - _deep_color: {r: 0.35686257, g: 0.6543391, b: 0.72156864, a: 0.84705883}
     - _normal_tiling: {r: 20, g: 20, b: 0, a: 0}
-    - _shallow_color: {r: 0.52479166, g: 0.8659127, b: 0.89433956, a: 0.13333334}
+    - _shallow_color: {r: 0.52479166, g: 0.8659127, b: 0.89433956, a: 0.46666667}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &1720603380052437017

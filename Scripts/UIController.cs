@@ -3,8 +3,8 @@ using UnityEngine.UI;
 using Cinemachine;
 using UnityEngine;
 using TMPro;
-using UnityEditor.Formats.Fbx.Exporter;
-using Autodesk.Fbx;
+//using UnityEditor.Formats.Fbx.Exporter;
+//using Autodesk.Fbx;
 using SimpleFileBrowser;
 
 
@@ -339,7 +339,7 @@ public class UIController : MonoBehaviour
 		// StartCoroutine( ShowLoadDialogCoroutine() );
     }
 
-    public void ExportMeshToFbx(string filePath) {
+    /*public void ExportMeshToFbx(string filePath) {
         //string filePath = Path.Combine(Application.dataPath, "MyTerrain.fbx");
         ExportToFbx(mesh_transform.gameObject, filePath);
     }
@@ -354,7 +354,7 @@ public class UIController : MonoBehaviour
         ModelExporter.ExportObject(path, gameObject, exportSettings);
 
         Debug.Log($"Object '{gameObject.name}' exported to FBX at: {path}");
-    }    
+    } */   
 
 
     private float[,] map = null;

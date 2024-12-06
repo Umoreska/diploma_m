@@ -16,14 +16,14 @@ public class DatasetCreator : MonoBehaviour
     {
         
     }
-    public void CreateHeightMapCSV(string csv_file_name) {
+    static public void CreateHeightMapCSV(string csv_file_name) {
         // Список для зберігання даних про ландшафти
         List<CSVHeightMapData> terrainDataList = new();
 
-        for(int pow_of_2 = 7; pow_of_2 <= 10; pow_of_2++) {
+        for(int pow_of_2 = 6; pow_of_2 <= 10; pow_of_2++) {
             int size = (int)Mathf.Pow(2, pow_of_2);
-            for(int scale = 1; scale <= 100; scale++) { // for fractal
-                for(int octave = 1; octave <= 4; octave++) {
+            for(int scale = 10; scale <= 100; scale+=10) { // for fractal
+                for(int octave = 1; octave <= 10; octave++) {
                     
                     System.Diagnostics.Stopwatch sw = new();
                     sw.Start();
@@ -37,9 +37,56 @@ public class DatasetCreator : MonoBehaviour
                         Octaves = octave,
                         Time = sw.ElapsedMilliseconds
                     });
-                }
-                
+                }                
             }
+            for(int roughness = 1; roughness <= 10; roughness+=2) { // for diamond-square
+                for(int octave = 1; octave <= 10; octave++) {
+                    
+                    System.Diagnostics.Stopwatch sw = new();
+                    sw.Start();
+                    float[,] heights = DiamondSquareTerrain.GenerateHeights(size+1, roughness, 0);
+                    sw.Stop();
+                    terrainDataList.Add(new CSVHeightMapData
+                    {
+                        Algorithm = "DiamondSquare",
+                        Size = size,
+                        Scale_Roughness_PointCount = roughness,
+                        Octaves = octave,
+                        Time = sw.ElapsedMilliseconds
+                    });
+                }                
+            }
+            for(int points_count = 1; points_count <= 100; points_count+=10) {// for voronoi
+                
+                System.Diagnostics.Stopwatch sw = new();
+                sw.Start();
+                float[,] heights = VoronoiTerrain.GenerateHeights(size, points_count, 0);
+                sw.Stop();
+                terrainDataList.Add(new CSVHeightMapData
+                {
+                    Algorithm = "Voronoi",
+                    Size = size,
+                    Scale_Roughness_PointCount = points_count,
+                    Octaves = points_count,
+                    Time = sw.ElapsedMilliseconds
+                });
+            }                
+            
+            for(int start_size = 16; start_size <= 100; start_size+=10) {// for DLA
+                
+                System.Diagnostics.Stopwatch sw = new();
+                sw.Start();
+                float[,] heights = VoronoiTerrain.GenerateHeights(size, start_size, 0);
+                sw.Stop();
+                terrainDataList.Add(new CSVHeightMapData
+                {
+                    Algorithm = "Voronoi",
+                    Size = size,
+                    Scale_Roughness_PointCount = start_size,
+                    Octaves = start_size,
+                    Time = sw.ElapsedMilliseconds
+                });
+            }    
         }
          
         WriteToCsv(csv_file_name, terrainDataList);

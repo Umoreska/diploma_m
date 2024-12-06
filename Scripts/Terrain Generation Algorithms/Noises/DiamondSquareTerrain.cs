@@ -60,7 +60,7 @@ public class DiamondSquareTerrain
             scale /= 2f;
         }
 
-        SmoothHeights(heights);
+        //SmoothHeights(heights);
         NormalizeHeights(heights);
 
         return heights;
@@ -116,7 +116,7 @@ public class DiamondSquareTerrain
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                heights[x, y] = Mathf.InverseLerp(min ,max, heights[x,y]); // в новій мапі мін стає 0, а мах - 1, тому від значень віднімається мін
+                heights[x, y] = Mathf.InverseLerp(min, max, heights[x,y]);
             }
         }
     }

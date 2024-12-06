@@ -110,10 +110,10 @@ public class MapDisplay : MonoBehaviour
         int width = noise_map.GetLength(0);
         int height = noise_map.GetLength(1);
         if(is_in_editor) {
-            mesh_renderer.sharedMaterial.mainTexture = CreateTexture(colourMap, width-2, height-2); // problem !!!
+            //mesh_renderer.sharedMaterial.mainTexture = CreateTexture(colourMap, width-2, height-2); // problem !!!
 
         }else {
-            mesh_renderer.sharedMaterial.mainTexture = CreateTexture(colourMap, width, height); // problem !!!
+            //mesh_renderer.sharedMaterial.mainTexture = CreateTexture(colourMap, width, height); // problem !!!
         }
     }
 
