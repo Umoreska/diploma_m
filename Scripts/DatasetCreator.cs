@@ -33,30 +33,29 @@ public class DatasetCreator : MonoBehaviour
                     {
                         Algorithm = "FractalPerlinNoise",
                         Size = size,
-                        Scale_Roughness_PointCount = scale,
+                        Scale_Roughness_PointCount_StartSize = scale,
                         Octaves = octave,
                         Time = sw.ElapsedMilliseconds
                     });
                 }                
             }
             for(int roughness = 1; roughness <= 10; roughness+=2) { // for diamond-square
-                for(int octave = 1; octave <= 10; octave++) {
                     
-                    System.Diagnostics.Stopwatch sw = new();
-                    sw.Start();
-                    float[,] heights = DiamondSquareTerrain.GenerateHeights(size+1, roughness, 0);
-                    sw.Stop();
-                    terrainDataList.Add(new CSVHeightMapData
-                    {
-                        Algorithm = "DiamondSquare",
-                        Size = size,
-                        Scale_Roughness_PointCount = roughness,
-                        Octaves = octave,
-                        Time = sw.ElapsedMilliseconds
-                    });
-                }                
+                System.Diagnostics.Stopwatch sw = new();
+                sw.Start();
+                float[,] heights = DiamondSquareTerrain.GenerateHeights(size+1, roughness, 0);
+                sw.Stop();
+                terrainDataList.Add(new CSVHeightMapData
+                {
+                    Algorithm = "DiamondSquare",
+                    Size = size,
+                    Scale_Roughness_PointCount_StartSize = roughness,
+                    Octaves = 1,
+                    Time = sw.ElapsedMilliseconds
+                });
+                              
             }
-            for(int points_count = 1; points_count <= 100; points_count+=10) {// for voronoi
+            for(int points_count = 10; points_count <= 100; points_count+=10) {// for voronoi
                 
                 System.Diagnostics.Stopwatch sw = new();
                 sw.Start();
@@ -66,24 +65,23 @@ public class DatasetCreator : MonoBehaviour
                 {
                     Algorithm = "Voronoi",
                     Size = size,
-                    Scale_Roughness_PointCount = points_count,
-                    Octaves = points_count,
+                    Scale_Roughness_PointCount_StartSize = points_count,
+                    Octaves = 1,
                     Time = sw.ElapsedMilliseconds
                 });
-            }                
-            
-            for(int start_size = 16; start_size <= 100; start_size+=10) {// for DLA
-                
+            }                            
+            for(int start_size = 16; start_size <= size; start_size*=2) {// for DLA
+                int upscale_count = (int)(Mathf.Log(size, 2) - Mathf.Log(start_size, 2));
                 System.Diagnostics.Stopwatch sw = new();
                 sw.Start();
-                float[,] heights = VoronoiTerrain.GenerateHeights(size, start_size, 0);
+                float[,] heights = DLA.RunDLA(start_size, upscale_count);
                 sw.Stop();
                 terrainDataList.Add(new CSVHeightMapData
                 {
-                    Algorithm = "Voronoi",
+                    Algorithm = "DLA",
                     Size = size,
-                    Scale_Roughness_PointCount = start_size,
-                    Octaves = start_size,
+                    Scale_Roughness_PointCount_StartSize = start_size,
+                    Octaves = upscale_count,
                     Time = sw.ElapsedMilliseconds
                 });
             }    
@@ -94,12 +92,12 @@ public class DatasetCreator : MonoBehaviour
 
     public static void WriteToCsv(string filePath, List<CSVHeightMapData> data, bool append=false) {
         using (var writer = new StreamWriter(filePath, append)) {
-            string first_line = "Algorithm;Size;Scale_Roughness_PointCount;Octaves;Time";
+            string first_line = "Algorithm;Size;Scale_Roughness_PointCount_StartSize;Octaves;Time";
             writer.WriteLine(first_line);
             // Приклад циклу для додавання рядків
             for (int i = 0; i < data.Count; i++) {
                 // Створюємо рядок для запису
-                string line = $"{data[i].Algorithm};{data[i].Size};{data[i].Scale_Roughness_PointCount};{data[i].Octaves};{data[i].Time}".Replace(",", ".");
+                string line = $"{data[i].Algorithm};{data[i].Size};{data[i].Scale_Roughness_PointCount_StartSize};{data[i].Octaves};{data[i].Time}".Replace(",", ".");
 
                 // Записуємо рядок у файл
                 writer.WriteLine(line);
@@ -129,7 +127,7 @@ public class DatasetCreator : MonoBehaviour
     public struct CSVHeightMapData{
         public string Algorithm;
         public int Size;
-        public int Scale_Roughness_PointCount;
+        public int Scale_Roughness_PointCount_StartSize;
         public int Octaves;
         public float Time;
     }

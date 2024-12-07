@@ -10,7 +10,8 @@ using SimpleFileBrowser;
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField] private Transform mesh_transform, water_transform;
+    [SerializeField] private SaveShaderGraphAsTexture ssgat;
+    [SerializeField] private Transform mesh_transform, water_transform, plane_transform;
     [SerializeField] private float min_water_height=-13f;
     private MeshCollider mesh_collider;
     [SerializeField] private GameObject player_prefab, editor_cameras, noise_settings, return_to_editor_hint, place_player_btn, infinite_generation_btns, shader_input_togglers;
@@ -21,6 +22,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameObject[] trees;
     [SerializeField] private MapGenerator map_generator;
     [SerializeField] private TMP_InputField infinite_seed_input;
+    [SerializeField] private TMP_Text time_text;
     [SerializeField] private GameObject size_input, draw_mode_input, scale_input, seed_input, offset_x_input, offset_y_input, roughness_input, octaves_input, persistance_input, 
                                     lacunarity_input, point_count_input, max_height_input, water_height_input, dla_initial_input, dla_steps_input, erosion_panel, trees_panel;
     [SerializeField] private TMP_Dropdown algorithm_dropdown, draw_mode_dropdown, size_dropdown;
@@ -90,14 +92,15 @@ public class UIController : MonoBehaviour
 
         camera_on_plane.transform.localPosition = Vector3.zero;
 
-        draw_mode_input.SetActive(true);
+        //draw_mode_input.SetActive(true);
+        mesh_transform.gameObject.SetActive(false);
+        plane_transform.gameObject.SetActive(true);
         
         max_height_input.SetActive(false);
         water_height_input.SetActive(false);
         shader_input_togglers.SetActive(false);
 
-        draw_mode_dropdown.value = (int)DrawMode.ColorMap;
-        draw_mode = DrawMode.ColorMap;
+        draw_mode = DrawMode.HeightMap;
     }
     public void LookAtTerrain() {
         camera_on_plane.gameObject.SetActive(false);
@@ -105,7 +108,10 @@ public class UIController : MonoBehaviour
 
         camera_on_terrain.transform.localPosition = Vector3.zero;
 
-        draw_mode_input.SetActive(false);
+        //draw_mode_input.SetActive(false);
+
+        mesh_transform.gameObject.SetActive(true);
+        plane_transform.gameObject.SetActive(false);
         
         max_height_input.SetActive(true);
         water_height_input.SetActive(true);
@@ -323,6 +329,7 @@ public class UIController : MonoBehaviour
             //FBXExporter.ExportSingleObject(mesh_transform.gameObject, paths[0]); // infinite loop? does not work
             //ObjExporter.ExportMeshToObj(mesh_transform.gameObject, paths[0]); // bad
             GLTFastExporter.SimpleExport(new GameObject[]{mesh_transform.gameObject}, paths[0]);
+            //ssgat.SaveShaderGraphToTexture(paths[0]);
         }, null, FileBrowser.PickMode.Files, false, "C:\\", "terrain.gltf", "Save As", "Save" );
 
 		// Example 2: Show a select folder dialog using callback approach
@@ -356,12 +363,17 @@ public class UIController : MonoBehaviour
         Debug.Log($"Object '{gameObject.name}' exported to FBX at: {path}");
     } */   
 
+    private void SaveTexture() {
+
+    }
 
     private float[,] map = null;
     private float[,] GenerateMap(int _size, HeightMapAlgorithm algorithm) {
         float[,] height_map = null;
         Debug.Log(algorithm_dropdown.value);
-        
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
+
         switch(algorithm) {
             case HeightMapAlgorithm.PerlinNoise:
                 height_map = PerlinNoiseGenerator.GenerateHeights(_size, scale_slider.value);
@@ -391,6 +403,9 @@ public class UIController : MonoBehaviour
                 Debug.Break();
             break;            
         }
+
+        sw.Stop();
+        time_text.text = $"{sw.ElapsedMilliseconds}ms";
 
         return height_map;
     }
@@ -426,11 +441,11 @@ public class UIController : MonoBehaviour
             map_display.DrawMesh(map, max_height_slider.value, map_generator.terrain_data.mesh_height_curve, use_flat_shading);
             UpdateMeshColliderAndWater();
         }else {
-            if((DrawMode)draw_mode_dropdown.value == DrawMode.NoiseMap) {
-                map_display.DrawNoiseMap(map);
+            map_display.DrawNoiseMap(map);
+            /*if((DrawMode)draw_mode_dropdown.value == DrawMode.NoiseMap) {
             }else {
-                map_display.DrawColorMap(map);
-            }
+                //map_display.DrawColorMap(map);
+            }*/
         }
     }
 

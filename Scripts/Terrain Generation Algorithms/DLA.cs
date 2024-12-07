@@ -49,8 +49,8 @@ public class DLA : MonoBehaviour{
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();        
         sw.Start();
 
-        AddPixels(PixelsPerStep(0));
-        Debug.Log($"step: {0}. added: {PixelsPerStep(0)}. spent: {sw.ElapsedMilliseconds} ms"); 
+        AddPixels(PixelsPerStep(grid.GetLength(0), 0));
+        Debug.Log($"step: {0}. added: {PixelsPerStep(grid.GetLength(0), 0)}. spent: {sw.ElapsedMilliseconds} ms"); 
         UpscaleTexture();
 
         sw.Stop();
@@ -62,12 +62,12 @@ public class DLA : MonoBehaviour{
             sw.Restart();
 
             UpscaleGrid();
-            AddPixels(PixelsPerStep(step+1));
+            AddPixels(PixelsPerStep(grid.GetLength(0), step+1));
             UpscaleTexture();
 
             
             sw.Stop();
-            Debug.Log($"step: {step+1}. added: {PixelsPerStep(step+1)}. spent: {sw.ElapsedMilliseconds} ms");
+            Debug.Log($"step: {step+1}. added: {PixelsPerStep(grid.GetLength(0), step+1)}. spent: {sw.ElapsedMilliseconds} ms");
         }
 
         //PrintPixelsOnScene(0);
@@ -140,8 +140,9 @@ public class DLA : MonoBehaviour{
         Note that the steps UpscaleTexture(); and Upscale(); have to be used consecutively.
         */
     }
-    public static int PixelsPerStep(int step) {
-        return (int)(12 * Mathf.Pow(2f, step % 2) * Mathf.Pow(9f, Mathf.Floor(step / 2.0f)));
+    public static int PixelsPerStep(int size, int step) {
+        //return (int)(12 * Mathf.Pow(2f, step % 2) * Mathf.Pow(9f, Mathf.Floor(step / 2.0f)));
+        return size * (step == 0 ? 1 : step);
     }
 
     static void PrintPixelsOnScene(int map_offset=0) {

@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public enum DrawMode {
-    NoiseMap, ColorMap, Mesh
+    HeightMap, Mesh
 }
 public class MapDisplay : MonoBehaviour
 {
@@ -107,13 +107,26 @@ public class MapDisplay : MonoBehaviour
         mesh_filter.sharedMesh = data.CreateMesh(true);    
         //mesh_filter.transform.localScale = Vector2.one * map_generator.terrain_data.uniform_scale;
 
+
+
         int width = noise_map.GetLength(0);
         int height = noise_map.GetLength(1);
+
+        CustomRenderTexture crt = new CustomRenderTexture(width, height);
+        //crt.filterMode = FilterMode.Point;
+        crt.initializationMaterial = mesh_renderer.sharedMaterial;
+        crt.initializationSource = CustomRenderTextureInitializationSource.Material;
+        crt.initializationMode = CustomRenderTextureUpdateMode.OnLoad;
+        //mesh_renderer.sharedMaterial.SetTexture("_MainTex", crt);
+        crt.Create();
+        mesh_renderer.sharedMaterial.SetTexture("_MainText", crt);
+        mesh_renderer.sharedMaterial.mainTexture = crt;
+
         if(is_in_editor) {
-            //mesh_renderer.sharedMaterial.mainTexture = CreateTexture(colourMap, width-2, height-2); // problem !!!
+            mesh_renderer.sharedMaterial.mainTexture = CreateTexture(colourMap, width-2, height-2); // problem !!!
 
         }else {
-            //mesh_renderer.sharedMaterial.mainTexture = CreateTexture(colourMap, width, height); // problem !!!
+            mesh_renderer.sharedMaterial.mainTexture = CreateTexture(colourMap, width, height); // problem !!!
         }
     }
 

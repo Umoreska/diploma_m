@@ -5,7 +5,7 @@ using UnityEngine;
 using System;
 using System.Diagnostics.Tracing;
 public enum TestMode {
-    Noise, Mesh, ChunkUpdate
+    None, Noise, Mesh, ChunkUpdate
 }
 public class Tester : MonoBehaviour
 {

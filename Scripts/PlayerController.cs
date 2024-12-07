@@ -113,7 +113,6 @@ public class PlayerController : MonoBehaviour
         
         isGrounded_prev_frame = isGrounded;
     }
-
     
     private IEnumerator Delay(float time, Action action) {
         yield return new WaitForSeconds(time);
@@ -121,6 +120,9 @@ public class PlayerController : MonoBehaviour
     }
 
     public void PlacePlayerOnTerrainSurface(float ray_check_height=9999) {
+        if(controller != null) {
+            controller.enabled = false;
+        }
         Vector3 characterPosition = transform.position;
         
         Vector3 rayStartPos = new Vector3(characterPosition.x, characterPosition.y+ray_check_height, characterPosition.z);
@@ -132,8 +134,12 @@ public class PlayerController : MonoBehaviour
         
         if (Physics.Raycast(ray, out hit, ray_check_height*2)) {
             transform.position = new Vector3(characterPosition.x, hit.point.y+3f, characterPosition.z);
+            Debug.Log($"{transform.position}");
         } else {
             Debug.LogWarning("No collision detected. The ray missed any colliders.");
+        }
+        if(controller != null) {
+            controller.enabled = true;
         }
     }
 

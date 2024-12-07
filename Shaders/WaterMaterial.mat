@@ -73,7 +73,7 @@ Material:
     - _normal_strength: 0.75
     - _sin_freq: 2
     - _smoothness: 1
-    - _strength: 0.01
+    - _strength: 0.1
     - _waves_speed: 1
     m_Colors:
     - _deep_color: {r: 0.35686257, g: 0.6543391, b: 0.72156864, a: 0.84705883}
