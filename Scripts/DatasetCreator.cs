@@ -18,7 +18,7 @@ public class DatasetCreator : MonoBehaviour
     }
     static public void CreateHeightMapCSV(string csv_file_name) {
         // Список для зберігання даних про ландшафти
-        List<CSVHeightMapData> terrainDataList = new();
+        List<CSVHeightMapData> height_map_data = new();
 
         for(int pow_of_2 = 6; pow_of_2 <= 10; pow_of_2++) {
             int size = (int)Mathf.Pow(2, pow_of_2);
@@ -29,7 +29,7 @@ public class DatasetCreator : MonoBehaviour
                     sw.Start();
                     float[,] height = FractalPerlinNoise.GenerateHeights(size, 0, scale, octave, 0.5f, 2f, Vector2.zero, FractalPerlinNoise.NormalizeMode.Local, FractalPerlinNoise.Noise.UnityPerlin);
                     sw.Stop();
-                    terrainDataList.Add(new CSVHeightMapData
+                    height_map_data.Add(new CSVHeightMapData
                     {
                         Algorithm = "FractalPerlinNoise",
                         Size = size,
@@ -45,7 +45,7 @@ public class DatasetCreator : MonoBehaviour
                 sw.Start();
                 float[,] heights = DiamondSquareTerrain.GenerateHeights(size+1, roughness, 0);
                 sw.Stop();
-                terrainDataList.Add(new CSVHeightMapData
+                height_map_data.Add(new CSVHeightMapData
                 {
                     Algorithm = "DiamondSquare",
                     Size = size,
@@ -61,7 +61,7 @@ public class DatasetCreator : MonoBehaviour
                 sw.Start();
                 float[,] heights = VoronoiTerrain.GenerateHeights(size, points_count, 0);
                 sw.Stop();
-                terrainDataList.Add(new CSVHeightMapData
+                height_map_data.Add(new CSVHeightMapData
                 {
                     Algorithm = "Voronoi",
                     Size = size,
@@ -76,7 +76,7 @@ public class DatasetCreator : MonoBehaviour
                 sw.Start();
                 float[,] heights = DLA.RunDLA(start_size, upscale_count);
                 sw.Stop();
-                terrainDataList.Add(new CSVHeightMapData
+                height_map_data.Add(new CSVHeightMapData
                 {
                     Algorithm = "DLA",
                     Size = size,
@@ -87,7 +87,7 @@ public class DatasetCreator : MonoBehaviour
             }    
         }
          
-        WriteToCsv(csv_file_name, terrainDataList);
+        WriteToCsv(csv_file_name, height_map_data);
     }
 
     public static void WriteToCsv(string filePath, List<CSVHeightMapData> data, bool append=false) {

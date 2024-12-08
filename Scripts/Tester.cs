@@ -36,7 +36,7 @@ public class Tester : MonoBehaviour
             case TestMode.ChunkUpdate:
                 infiniteTerrainGeneration.enabled = true;
                 StartCoroutine(MovePlayerOnTerrain());
-                StartCoroutine(WriteChunkData("ChunkData.csv", 1f, 100));
+                StartCoroutine(CreateChunkData("ChunkData.csv", 1f, 100));
             break;
         }
     }
@@ -49,25 +49,30 @@ public class Tester : MonoBehaviour
         }
     }
 
-    private IEnumerator WriteChunkData(string csv_file_name, float delta_time, int rows_count=1) {
-        int rows_written = 0;
+    private IEnumerator CreateChunkData(string csv_file_name, float delta_time, int rows_count=1) {
         List<DatasetCreator.CSVChunkData> data = new List<DatasetCreator.CSVChunkData>();
-        Debug.Log($"creating chunk data");
-        while(rows_written < rows_count) {
+        int rows_written = 0;
+        while(rows_written < rows_count) {            
+
+            float timer=0;
+            int fps_counter=0;
+            while(timer < delta_time) {
+                timer += Time.deltaTime;
+                fps_counter++;
+                yield return null;
+            }
 
             infiniteTerrainGeneration.GetInfoAboutChunks(out int all, out int active);
             data.Add(new DatasetCreator.CSVChunkData{
                 UpdateMode = infiniteTerrainGeneration.UpdateMode,
                 ChunkCount = all,
                 ActiveChunkCount = active,
-                FPS = (int)(1 / Time.deltaTime)
+                FPS = fps_counter
             });
-
             rows_written++;
-            Debug.Log($"rows written: {rows_written}");
-            yield return new WaitForSeconds(delta_time);
+            Debug.Log($"row created: {rows_written}");
         }
-        Debug.Log($"writing to {csv_file_name}...");
+        Debug.Log("Saving to csv");
         DatasetCreator.WriteToCsv(csv_file_name, data, append);
     }
 

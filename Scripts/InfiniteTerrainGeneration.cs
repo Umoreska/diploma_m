@@ -11,7 +11,7 @@ public enum ChunkUpdateMode{
 }
 public class InfiniteTerrainGeneration : MonoBehaviour
 {    
-    private const float viewer_move_distance_threshold_for_update = 25f;
+    private const float viewer_move_distance_threshold_for_update = 16;
     private const float squared_viewer_move_distance_threshold_for_update = viewer_move_distance_threshold_for_update*viewer_move_distance_threshold_for_update;
     private const float viewer_rotate_angle_threshold_for_update = 5f;
     public GameObject terrain_prefab;
