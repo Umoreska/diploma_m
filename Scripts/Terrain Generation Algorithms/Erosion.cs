@@ -1,7 +1,5 @@
 using UnityEngine;
-
 public class Erosion : MonoBehaviour {
-
     public int seed;
     [Range (2, 8)]
     public int erosionRadius = 3;
@@ -17,15 +15,12 @@ public class Erosion : MonoBehaviour {
     public float evaporateSpeed = .01f;
     public float gravity = 4;
     public int maxDropletLifetime = 30;
-
     public float initialWaterVolume = 1;
     public float initialSpeed = 1;
-
     // Indices and weights of erosion brush precomputed for every node
     int[][] erosionBrushIndices;
     float[][] erosionBrushWeights;
     System.Random prng;
-
     int currentSeed;
     int currentErosionRadius;
     int currentMapSize;
@@ -36,7 +31,6 @@ public class Erosion : MonoBehaviour {
             prng = new System.Random (seed);
             currentSeed = seed;
         }
-
         if (erosionBrushIndices == null || currentErosionRadius != erosionRadius || currentMapSize != mapSize) {
             InitializeBrushIndices (mapSize, erosionRadius);
             currentErosionRadius = erosionRadius;
@@ -119,7 +113,6 @@ public class Erosion : MonoBehaviour {
                         sediment += deltaSediment;
                     }
                 }
-
                 // Update droplet's speed and water content
                 speed = Mathf.Sqrt (speed * speed + deltaHeight * gravity);
                 water *= (1 - evaporateSpeed);
@@ -130,42 +123,34 @@ public class Erosion : MonoBehaviour {
     HeightAndGradient CalculateHeightAndGradient(float[] nodes, int mapSize, float posX, float posY) {
         int coordX = (int)posX;
         int coordY = (int)posY;
-
         // Calculate droplet's offset inside the cell (0,0) = at NW node, (1,1) = at SE node
         float x = posX - coordX;
         float y = posY - coordY;
-
         // Calculate heights of the four nodes of the droplet's cell
         int nodeIndexNW = coordY * mapSize + coordX;
         float heightNW = nodes[nodeIndexNW];
         float heightNE = nodes[nodeIndexNW + 1];
         float heightSW = nodes[nodeIndexNW + mapSize];
         float heightSE = nodes[nodeIndexNW + mapSize + 1];
-
         // Calculate droplet's direction of flow with bilinear interpolation of height difference along the edges
         float gradientX = (heightNE - heightNW) * (1 - y) + (heightSE - heightSW) * y;
         float gradientY = (heightSW - heightNW) * (1 - x) + (heightSE - heightNE) * x;
-
         // Calculate height with bilinear interpolation of the heights of the nodes of the cell
         float height = heightNW * (1 - x) * (1 - y) + heightNE * x * (1 - y) + heightSW * (1 - x) * y + heightSE * x * y;
-
         return new HeightAndGradient() { height = height, gradientX = gradientX, gradientY = gradientY };
     }
 
     void InitializeBrushIndices (int mapSize, int radius) {
         erosionBrushIndices = new int[mapSize * mapSize][];
         erosionBrushWeights = new float[mapSize * mapSize][];
-
         int[] xOffsets = new int[radius * radius * 4];
         int[] yOffsets = new int[radius * radius * 4];
         float[] weights = new float[radius * radius * 4];
         float weightSum = 0;
         int addIndex = 0;
-
         for (int i = 0; i < erosionBrushIndices.GetLength(0); i++) {
             int centreX = i % mapSize;
             int centreY = i / mapSize;
-
             if (centreY <= radius || centreY >= mapSize - radius || centreX <= radius + 1 || centreX >= mapSize - radius) {
                 weightSum = 0;
                 addIndex = 0;
@@ -175,7 +160,6 @@ public class Erosion : MonoBehaviour {
                         if (sqrDst < radius * radius) {
                             int coordX = centreX + x;
                             int coordY = centreY + y;
-
                             if (coordX >= 0 && coordX < mapSize && coordY >= 0 && coordY < mapSize) {
                                 float weight = 1 - Mathf.Sqrt(sqrDst) / radius;
                                 weightSum += weight;
@@ -188,18 +172,15 @@ public class Erosion : MonoBehaviour {
                     }
                 }
             }
-
             int numEntries = addIndex;
             erosionBrushIndices[i] = new int[numEntries];
             erosionBrushWeights[i] = new float[numEntries];
-
             for (int j = 0; j < numEntries; j++) {
                 erosionBrushIndices[i][j] = (yOffsets[j] + centreY) * mapSize + xOffsets[j] + centreX;
                 erosionBrushWeights[i][j] = weights[j] / weightSum;
             }
         }
     }
-
     struct HeightAndGradient {
         public float height;
         public float gradientX;

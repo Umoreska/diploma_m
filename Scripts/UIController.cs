@@ -1,15 +1,15 @@
 
+using SimpleFileBrowser;
 using UnityEngine.UI;
 using Cinemachine;
 using UnityEngine;
 using TMPro;
-//using UnityEditor.Formats.Fbx.Exporter;
-//using Autodesk.Fbx;
-using SimpleFileBrowser;
+using UnityEngine.TextCore.Text;
 
 
 public class UIController : MonoBehaviour
 {
+    [SerializeField] private Camera rendering_camera;
     [SerializeField] private SaveShaderGraphAsTexture ssgat;
     [SerializeField] private Transform mesh_transform, water_transform, plane_transform;
     [SerializeField] private float min_water_height=-13f;
@@ -293,78 +293,54 @@ public class UIController : MonoBehaviour
     }
 
     public void ShowSaveDialog() {
-         // Set filters (optional)
-		// It is sufficient to set the filters just once (instead of each time before showing the file browser dialog), 
-		// if all the dialogs will be using the same filters
-		//FileBrowser.SetFilters( true, new FileBrowser.Filter( "Images", ".jpg", ".png" ), new FileBrowser.Filter( "Text Files", ".txt", ".pdf" ) );
 		FileBrowser.SetFilters( true, new FileBrowser.Filter( "3D Files", ".gltf") );
-
-		// Set default filter that is selected when the dialog is shown (optional)
-		// Returns true if the default filter is set successfully
-		// In this case, set Images filter as the default filter
 		FileBrowser.SetDefaultFilter( ".gltf" );
-
-		// Set excluded file extensions (optional) (by default, .lnk and .tmp extensions are excluded)
-		// Note that when you use this function, .lnk and .tmp extensions will no longer be
-		// excluded unless you explicitly add them as parameters to the function
-		//FileBrowser.SetExcludedExtensions( ".lnk", ".tmp", ".zip", ".rar", ".exe" );
-
-		// Add a new quick link to the browser (optional) (returns true if quick link is added successfully)
-		// It is sufficient to add a quick link just once
-		// Name: Users
-		// Path: C:\Users
-		// Icon: default (folder icon)
 		FileBrowser.AddQuickLink( "Users", "C:\\Users", null );
-		
-		// !!! Uncomment any of the examples below to show the file browser !!!
-
-		// Example 1: Show a save file dialog using callback approach
-		// onSuccess event: not registered (which means this dialog is pretty useless)
-		// onCancel event: not registered
-		// Save file/folder: file, Allow multiple selection: false
-		// Initial path: "C:\", Initial filename: "Screenshot.png"
-		// Title: "Save As", Submit button text: "Save"
 		FileBrowser.ShowSaveDialog( (paths)=> {
             //ExportMeshToFbx(paths[0]); // works only in edit            
             //FBXExporter.ExportSingleObject(mesh_transform.gameObject, paths[0]); // infinite loop? does not work
             //ObjExporter.ExportMeshToObj(mesh_transform.gameObject, paths[0]); // bad
+            water_transform.gameObject.SetActive(false);
+            Debug.Log($"is water active before? {water_transform.gameObject.activeInHierarchy}");
+
+            //Texture texture = ssgat.SaveShaderGraphToTexture(paths[0], map.GetLength(0));
+            Texture2D texture = ssgat.SaveTextureWithCamera(paths[0]);
+            texture = FlipTextureHorizontally(texture);
+
+            mesh_transform.GetComponent<MeshRenderer>().sharedMaterial.mainTexture = texture;
             GLTFastExporter.SimpleExport(new GameObject[]{mesh_transform.gameObject}, paths[0]);
-            //ssgat.SaveShaderGraphToTexture(paths[0]);
+
+            water_transform.gameObject.SetActive(true);
+            Debug.Log($"is water active after? {water_transform.gameObject.activeInHierarchy}");
         }, null, FileBrowser.PickMode.Files, false, "C:\\", "terrain.gltf", "Save As", "Save" );
-
-		// Example 2: Show a select folder dialog using callback approach
-		// onSuccess event: print the selected folder's path
-		// onCancel event: print "Canceled"
-		// Load file/folder: folder, Allow multiple selection: false
-		// Initial path: default (Documents), Initial filename: empty
-		// Title: "Select Folder", Submit button text: "Select"
-		// FileBrowser.ShowLoadDialog( ( paths ) => { Debug.Log( "Selected: " + paths[0] ); },
-		//						   () => { Debug.Log( "Canceled" ); },
-		//						   FileBrowser.PickMode.Folders, false, null, null, "Select Folder", "Select" );
-
-		// Example 3: Show a select file dialog using coroutine approach
-		// StartCoroutine( ShowLoadDialogCoroutine() );
     }
 
-    /*public void ExportMeshToFbx(string filePath) {
-        //string filePath = Path.Combine(Application.dataPath, "MyTerrain.fbx");
-        ExportToFbx(mesh_transform.gameObject, filePath);
-    }
-
-
-    private static void ExportToFbx(GameObject gameObject, string path) {
-
-        ExportModelOptions exportSettings = new ExportModelOptions();
-        exportSettings.ExportFormat = ExportFormat.Binary;
-        exportSettings.KeepInstances = false;
-
-        ModelExporter.ExportObject(path, gameObject, exportSettings);
-
-        Debug.Log($"Object '{gameObject.name}' exported to FBX at: {path}");
-    } */   
-
-    private void SaveTexture() {
-
+    Texture2D FlipTextureHorizontally(Texture2D original) {
+        int textureWidth = original.width;
+        int textureHeight = original.height;
+    
+        Color[] colorArray = original.GetPixels();
+                   
+        for (int j = 0; j < textureHeight; j++)
+        {
+            int rowStart = 0;
+            int rowEnd = textureWidth - 1;
+    
+            while (rowStart < rowEnd)
+            {
+                Color hold = colorArray[(j * textureWidth) + (rowStart)];
+                colorArray[(j * textureWidth) + (rowStart)] = colorArray[(j * textureWidth) + (rowEnd)];
+                colorArray[(j * textureWidth) + (rowEnd)] = hold;
+                rowStart++;
+                rowEnd--;
+            }
+        }
+                  
+        Texture2D finalFlippedTexture = new Texture2D(original.width, original.height);
+        finalFlippedTexture.SetPixels(colorArray);
+        finalFlippedTexture.Apply();
+    
+        return finalFlippedTexture;
     }
 
     private float[,] map = null;
@@ -396,6 +372,7 @@ public class UIController : MonoBehaviour
                 int initialGridSize = (int)dla_initial_slider.value;
                 int stepAmount = (int)dla_steps_slider.value;
                 height_map = DLA.RunDLA(initialGridSize, stepAmount);
+                rendering_camera.orthographicSize = height_map.GetLength(0)*5;
                 //int size = initialGridSize * (int)Mathf.Pow(DLA.UPSCALE_FACTOR, stepAmount); // res_size = initial * scale_factor^steps// just in case lol
                 break;
             default:
@@ -414,6 +391,7 @@ public class UIController : MonoBehaviour
         sw.Start();
         
         int _size = (int)Mathf.Pow(2, size_dropdown.value+5);
+        rendering_camera.orthographicSize = _size*5;
         algorithm = (HeightMapAlgorithm)algorithm_dropdown.value;
         map = GenerateMap(_size, algorithm);
         sw.Stop();

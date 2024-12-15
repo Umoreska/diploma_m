@@ -18,6 +18,9 @@ public class GLTFastExporter : MonoBehaviour {
 
         if(!success) {
             Debug.LogError("Something went wrong exporting a glTF");
+        }else {
+            Debug.Log($"Simple exported to {path}");
+
         }
     }
 }

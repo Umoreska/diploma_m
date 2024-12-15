@@ -1,5 +1,3 @@
-
-
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -7,10 +5,8 @@ public class DLA : MonoBehaviour{
     [SerializeField] private MapDisplay map_display;
     static GameObject cubes_parent = null; 
     public const int UPSCALE_FACTOR = 2;    // Фактор збільшення розміру сітки
-    static int step = 1; // how often this dla was upscaled already 
-
+    static int step = 1; // how often this dla was upscaled already
     static readonly Vector2Int[] offsets = { new Vector2Int(0,1), new Vector2Int(1,0), new Vector2Int(0,-1), new Vector2Int(-1,0) };
-
     static List<Pixel> pixels;
     static public Pixel mainPixel;
     static Pixel[,] grid;
@@ -145,101 +141,6 @@ public class DLA : MonoBehaviour{
         return size * (step == 0 ? 1 : step);
     }
 
-    static void PrintPixelsOnScene(int map_offset=0) {
-        mainPixel.type = Pixel.PixelType.MAIN;
-
-        float max_value = float.MinValue;
-        map_offset = grid.GetLength(0);
-        int width = grid.GetLength(0);
-
-        // getting max-value
-        foreach(var pixel in pixels) {
-            if(Mathf.Abs(pixel.value) > max_value) {
-                max_value = Mathf.Abs(pixel.value);
-            }
-        }
-        max_value += 1; // so the max value will not be 0;
-        Debug.Log($"max_value: {max_value}");
-
-
-        // creating cubes in scene. for better look
-        for(int i = 0; i < grid.GetLength(0); i++) {
-            for(int j = 0; j < grid.GetLength(1); j++) {
-
-                if(grid[i,j] != null) {
-                    if(grid[i,j] == mainPixel) {
-                        Debug.Log($"printing mainPixel. its pos: {grid[i,j].position}");
-                    }
-                    //float cube_height = max_value - Mathf.Abs(grid[i,j].value);
-                    CreateCube(new Vector2Int(i + map_offset, j), grid[i,j].value, grid[i,j]);
-                }else {
-                    //CreateCube(new Vector2Int(i + map_offset,j), 0.001f, null);
-                }
-
-                //CreateCube(new Vector2Int(i + map_offset, j + map_offset), image[i*width + j] + 0.001f, null);
-
-            }
-        }
-    }
-
-    private static void CreateCube(Vector2Int position, float cube_height, Pixel pixel) {
-        float position_y = cube_height / 2;
-        GameObject cube_pixel = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube_pixel.transform.parent = cubes_parent.transform;
-        cube_pixel.transform.localScale = new Vector3(0.8f, cube_height, 0.8f);
-        cube_pixel.transform.position = new Vector3(position.x,position_y,position.y);
-
-        Renderer renderer = cube_pixel.GetComponent<Renderer>();
-        if(pixel == null) {
-            return;
-        }else {
-            cube_pixel.AddComponent<CubePixel>().pixel = pixel;
-        }
-        switch(pixel.type) {
-            case Pixel.PixelType.None:
-            break;
-            case Pixel.PixelType.New:
-                renderer.material.color = Color.blue;
-            break;
-            case Pixel.PixelType.Mid:
-                renderer.material.color = Color.magenta;
-                break;
-            case Pixel.PixelType.Last:
-                renderer.material.color = Color.white;
-            break;
-            case Pixel.PixelType.Old:
-                renderer.material.color = Color.red;
-            break;
-            case Pixel.PixelType.MAIN:
-                renderer.material.color = Color.yellow;
-            break;
-        }
-    }
-
-    static void PrintPixels(int[,] grid) {
-        string line = string.Empty;
-        for(int i = 0; i < grid.GetLength(0); i++) {
-            for(int j = 0; j < grid.GetLength(1); j++) {
-                line += $"{grid[i,j]}";
-            }
-            line += "\n";
-        }
-        Debug.Log(line);
-    }
-    static void PrintValues(Pixel[,] grid) {
-        string line = string.Empty;
-        for(int i = 0; i < grid.GetLength(0); i++) {
-            for(int j = 0; j < grid.GetLength(1); j++) {
-                if(grid[i,j] == null) {
-                    line += " ";
-                }else {
-                    line += $"{i}{j}: {grid[i,j].value} ";
-                }
-            }
-            line += "\n";
-        }
-        Debug.Log(line);
-    }
 
     static void AddPixels(int amount=1, bool on_edge=false) {
         if(amount < 1) {
@@ -334,8 +235,6 @@ public class DLA : MonoBehaviour{
             Vector2Int connecter_pos = pixel.position * UPSCALE_FACTOR + (child.position - pixel.position);
             Pixel connecter = new Pixel(connecter_pos, pixel, Pixel.PixelType.Mid);
             pixels.Add(connecter);
-
-
             // jiggle time !!!
             Vector2Int ortho = child.position - pixel.position;
             if(ortho.x > 1 ) {
@@ -354,8 +253,6 @@ public class DLA : MonoBehaviour{
             int ran = Random.Range(0, 11);
             if(ran >= 9) connecter.position += ortho;
             else if(ran >= 7) connecter.position -= ortho;
-
-
             // finish up linking
             //connecter.parent = pixel;
             child.parent = connecter;
@@ -451,27 +348,6 @@ public class DLA : MonoBehaviour{
         //image = MyBlur(image, image_size);
         image = GaussBlur(image, image_size);
     }
-
-    private static float[] MyBlur(float[] image, int size) {
-        float[] new_image = new float[size*size];
-        for (int x = 1; x < size - 1; x++) {
-            for (int y = 1; y < size - 1; y++) {
-                float sum = 0f;
-                int count = 0;
-
-                for (int i = -1; i <= 1; i++) {
-                    for (int j = -1; j <= 1; j++) {
-                        sum += image[(x + i)*size + y + j];
-                        count++;
-                    }
-                }
-
-                new_image[x*size + y] = sum / count;
-            }
-        }
-        return new_image;
-    }
-
 
 
     static private void CalculateValues() {
