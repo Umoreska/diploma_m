@@ -37,6 +37,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MainText:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _dirt_texture:
         m_Texture: {fileID: 2800000, guid: 17405fba9d20b47408239b3e82d60232, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -86,14 +90,14 @@ Material:
     - _ground_rock_power: 2.5
     - _ground_slope_power: 2
     - _mountain_rock_power: 3
-    - _mountain_slope_power: 1
+    - _mountain_slope_power: 2
     - _rock_bottom: 15
     - _rock_edge: 25
     - _rock_height: 153.2
     - _sand_bottom: -0.32
     - _sand_edge: 1
     - _sand_top: 0
-    - _snow_bottom: 16
+    - _snow_bottom: 50
     - _snow_edge: 25
     - _snow_height: 211.7
     m_Colors:

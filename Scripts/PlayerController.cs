@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float place_on_surface_delay = 0.1f;
     [SerializeField] private float ray_check_height = 50f;
-    private Action on_key_pressed_e=null, on_key_pressed_r=null;
+    private Action on_key_pressed_e=null, on_key_pressed_r=null, on_key_pressed_v=null;
 
     void Start() {
         infinite_terrain = FindAnyObjectByType<InfiniteTerrainGeneration>();
@@ -91,22 +91,22 @@ public class PlayerController : MonoBehaviour
         }
 
         
-        if(Input.GetKey(KeyCode.E)) {
+        if(Input.GetKeyDown(KeyCode.E)) {
             on_key_pressed_e?.Invoke();
         }
-
-        if(Input.GetKey(KeyCode.R)) {
+        if(Input.GetKeyDown(KeyCode.R)) {
             on_key_pressed_r?.Invoke();
+        }
+        if(Input.GetKeyDown(KeyCode.V)) {
+            on_key_pressed_v?.Invoke();
         }
 
         if(Input.GetKey(KeyCode.Alpha1) && infinite_terrain != null) {
             infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.Square);
         }
-
         if(Input.GetKey(KeyCode.Alpha2) && infinite_terrain != null) {
             infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.OnlyView);
         }
-
         if(Input.GetKey(KeyCode.Alpha3) && infinite_terrain != null) {
             infinite_terrain.ChangeUpdateMode(ChunkUpdateMode.ViewPreload);
         }
@@ -149,6 +149,10 @@ public class PlayerController : MonoBehaviour
 
     public void SetActionOnKeyR(Action act) {
         on_key_pressed_r = act;
+    }
+
+    public void SetActionOnKeyV(Action act) {
+        on_key_pressed_v = act;
     }
 
 }

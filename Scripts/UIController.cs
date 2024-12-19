@@ -38,6 +38,7 @@ public class UIController : MonoBehaviour
         mesh_collider = mesh_transform.GetComponent<MeshCollider>();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        infinite_seed_input.text = map_generator.noise_data.seed+"";
     }
 
     public void GenerateOnInputChange(bool generate_on_input_change) {
@@ -296,11 +297,11 @@ public class UIController : MonoBehaviour
 		FileBrowser.SetFilters( true, new FileBrowser.Filter( "3D Files", ".gltf") );
 		FileBrowser.SetDefaultFilter( ".gltf" );
 		FileBrowser.AddQuickLink( "Users", "C:\\Users", null );
+        water_transform.gameObject.SetActive(false);
 		FileBrowser.ShowSaveDialog( (paths)=> {
             //ExportMeshToFbx(paths[0]); // works only in edit            
             //FBXExporter.ExportSingleObject(mesh_transform.gameObject, paths[0]); // infinite loop? does not work
             //ObjExporter.ExportMeshToObj(mesh_transform.gameObject, paths[0]); // bad
-            water_transform.gameObject.SetActive(false);
             Debug.Log($"is water active before? {water_transform.gameObject.activeInHierarchy}");
 
             //Texture texture = ssgat.SaveShaderGraphToTexture(paths[0], map.GetLength(0));
@@ -312,7 +313,7 @@ public class UIController : MonoBehaviour
 
             water_transform.gameObject.SetActive(true);
             Debug.Log($"is water active after? {water_transform.gameObject.activeInHierarchy}");
-        }, null, FileBrowser.PickMode.Files, false, "C:\\", "terrain.gltf", "Save As", "Save" );
+        }, ()=> water_transform.gameObject.SetActive(true), FileBrowser.PickMode.Files, false, "C:\\", "terrain.gltf", "Save As", "Save" );
     }
 
     Texture2D FlipTextureHorizontally(Texture2D original) {

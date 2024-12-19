@@ -41,7 +41,7 @@ public class InfiniteTerrainStatistic : MonoBehaviour
 
         
         fps_text.text = $"FPS: {1/Time.deltaTime}";
-        performance_text.text = $"CPU Usage: {cpuUsage:F2}%";
+        //performance_text.text = $"CPU Usage: {cpuUsage:F2}%";
         chunks_count_text.text = $"Chunk Count: {chunk_count}";
         active_chunks_count.text = $"Active Chunks: {active_chunk_count}";
     }
